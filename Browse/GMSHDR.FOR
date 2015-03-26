@@ -1,0 +1,3432 @@
+C******************************************************* GMSHDR
+C  PURPOSE:
+C  LIBRARY ROUTINES FOR ICIS FORTRAN APPLICATIONS
+C 
+C  Author: Graham McLaren
+C
+C  Copyright (C) 2005 IRRI
+C 
+C  This program is free software; you can redistribute it and/or
+C  modify it under the terms of the GNU General Public License
+C  as published by the Free Software Foundation; either version 2
+C  of the License, or (at your option) any later version.
+C 
+C  This program is distributed in the hope that it will be useful,
+C  but WITHOUT ANY WARRANTY; without even the implied warranty of
+C  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+C  GNU General Public License for more details.
+C  You should have received a copy of the GNU General Public License
+C  along with this program; if not, write to the Free Software
+C  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
+C
+C******************************************************* GMS_STRUCTURES
+C  PURPOSE:
+C  DEFINE USER SPECIFIED DATA TYPES FOR GMS
+C---- LAST UPDATE 10/10/02 ----------------------------- GMS_STRUCTURES
+      MODULE GMS_STRUCTURES
+C
+      TYPE GMS_GERMPLASM
+              SEQUENCE
+              INTEGER*4 GERMPLASM_ID
+              INTEGER*4 METHOD
+              INTEGER*4 NO_PROGENITORS
+              INTEGER*4 PROGENITOR_ID1
+              INTEGER*4 PROGENITOR_ID2
+              INTEGER*4 USER
+              INTEGER*4 LOCAL_GID
+              INTEGER*4 LOCATION
+              INTEGER*4 DATE
+              INTEGER*4 REFERENCE
+              INTEGER*4 REPLACE
+	        INTEGER*4 MGID
+      END TYPE GMS_GERMPLASM
+
+      TYPE GMS_NAMEDATA
+                   SEQUENCE
+                   INTEGER*4 NID
+                   INTEGER*4 GERMPLASM
+                   INTEGER*4 TYPE
+                   INTEGER*4 STATUS
+                   INTEGER*4 USER
+                   INTEGER*4 LOCATION
+                   INTEGER*4 DATE
+                   INTEGER*4 REFERENCE
+      END TYPE GMS_NAMEDATA
+
+      TYPE GMS_ATTRIBUTE
+                  SEQUENCE
+                  INTEGER*4 AID
+                  INTEGER*4 GERMPLASM
+                  INTEGER*4 TYPE
+                  INTEGER*4 USER
+                  INTEGER*4 LOCATION
+                  INTEGER*4 DATE
+                  INTEGER*4 REFERENCE
+      END TYPE GMS_ATTRIBUTE
+
+      TYPE GMS_METHOD
+                  SEQUENCE
+                  INTEGER*4 METHOD_ID
+                  INTEGER*4 REFERENCE
+                  INTEGER*4 NO_PROGENITORS
+                  INTEGER*4 NO_MATERNAL
+                  INTEGER*4 ATTRIBUTE
+                  CHARACTER TYPE*4
+                  CHARACTER CODE*12
+                  CHARACTER NAME*52
+                  CHARACTER MGRP*4
+                  INTEGER*4 GENEQ
+                  INTEGER*4 MUID
+                  INTEGER*4 LMID
+                  INTEGER*4 MDATE
+      END TYPE GMS_METHOD
+
+      TYPE GMS_UDFIELD
+                  SEQUENCE
+                  INTEGER*4 UDFIELD_ID
+                  CHARACTER TABLE*28
+                  CHARACTER TYPE*16
+                  CHARACTER CODE*52
+                  CHARACTER NAME*52
+                  CHARACTER FORMAT*256
+                  INTEGER*4 LFLDNO
+                  INTEGER*4 FUID
+                  INTEGER*4 FDATE
+                  INTEGER*4 SCALE
+      END TYPE GMS_UDFIELD
+
+      TYPE GMS_LOCATION
+                    SEQUENCE
+                    INTEGER*4 LOCATION_ID
+                    INTEGER*4 TYPE
+                    INTEGER*4 NLLP
+                    CHARACTER PREFERRED_NAME*64
+                    CHARACTER ABBREVIATION*12
+                    INTEGER*4 SUBNAT_LEVEL3
+                    INTEGER*4 SUBNAT_LEVEL2
+                    INTEGER*4 SUBNAT_LEVEL1
+                    INTEGER*4 COUNTRY
+                      INTEGER*4 REPLACE
+      END TYPE GMS_LOCATION
+
+      TYPE GMS_USER
+              SEQUENCE
+              INTEGER*4 USER_ID
+              INTEGER*4 INSTALLATION
+              INTEGER*4 STATUS
+              INTEGER*4 ACCESS
+              INTEGER*4 TYPE
+              CHARACTER NAME*32
+              CHARACTER PASSWORD*12
+              INTEGER*4 PERSON_ID
+              INTEGER*4 ASSIGN_DATE
+              INTEGER*4 CLOSE_DATE
+      END TYPE GMS_USER
+
+      TYPE GMS_INSTALLATION
+              SEQUENCE
+              INTEGER*4 INSTALLATION
+              INTEGER*4 ADMINISTRATOR
+              INTEGER*4 UDATE
+              INTEGER*4 UGID
+              INTEGER*4 ULOCN
+              INTEGER*4 UMETHN
+              INTEGER*4 UFLDNO
+              INTEGER*4 UREFNO
+              INTEGER*4 UPID
+      END TYPE GMS_INSTALLATION
+
+      TYPE GMS_LISTNAME
+              SEQUENCE
+              INTEGER*4 LISTID
+              CHARACTER LISTNAME*48
+              INTEGER*4 LISTDATE
+              CHARACTER LISTTYPE*8
+              INTEGER*4 LISTUID
+              CHARACTER LISTDESC*256
+              INTEGER*4 LISTSTATUS
+              INTEGER*4 LISTHIER
+      END TYPE GMS_LISTNAME
+
+      TYPE GMS_LISTDATA
+              SEQUENCE
+              INTEGER*4 LISTID
+              INTEGER*4 GID
+              INTEGER*4 LRECID
+              CHARACTER ENTRYCD*48
+              CHARACTER SOURCE*256
+              CHARACTER DESIG*256
+              CHARACTER GRPNAME*256
+              INTEGER*4 ENTRYID
+      END TYPE GMS_LISTDATA
+
+      TYPE GMS_CHANGES
+              INTEGER*4 cid
+              INTEGER*4 crecord
+              INTEGER*4 cfrom
+              INTEGER*4 cto
+              INTEGER*4 cdate
+              INTEGER*4 ctime
+              INTEGER*4 cuid
+              INTEGER*4 cref
+              CHARACTER ctable*16
+              CHARACTER cfield*16
+              CHARACTER cgroup*20
+      END TYPE GMS_CHANGES
+
+      TYPE GMS_TREE
+      SEQUENCE
+              INTEGER*4 GID
+              INTEGER*2 METHN
+              INTEGER*2 GNPGS
+              INTEGER*4 DADDR
+              INTEGER*4 GADDR
+              INTEGER*2 ORDER
+              INTEGER*2 EXORD
+      END TYPE GMS_TREE
+
+      TYPE GMS_BIBREFS
+      SEQUENCE
+      INTEGER*4 REFID
+      INTEGER*4 PUBTYPE
+      INTEGER*4 PUBDATE
+      CHARACTER AUTHORS*100
+      CHARACTER EDITORS*100
+      CHARACTER ANALYT*255
+      CHARACTER MONOG*255
+      CHARACTER SERIES*255
+      CHARACTER VOLUME*10
+      CHARACTER ISSUE*10
+      CHARACTER PAGECOL*25
+      CHARACTER PUBLISH*50
+      CHARACTER PUBCITY*30
+      CHARACTER PUBCNTRY*75
+      END TYPE GMS_BIBREFS
+
+      CHARACTER G_BELL*1
+      DATA G_BELL /7/
+
+      END MODULE GMS_STRUCTURES
+C******************************************************* GMS_INTERFACE
+C  PURPOSE:
+C  SPECIFY THE DLL IMPORTS AND THEIR INTERFACES
+C---- LAST UPDATE 26/02/97 ----------------------------- GMS_INTERFACE
+      MODULE GMS_INTERFACE
+C------------------------------------------------------- GMS_encryptPWD
+!MS$ATTRIBUTES IMPORT :: GMS_encryptPWD
+      INTERFACE
+      INTEGER*4 FUNCTION GMS_encryptPWD(szPwd,szEncrypt)
+      CHARACTER*(*) szPwd,szEncrypt
+!MS$ATTRIBUTES STDCALL, ALIAS:'GMS_encryptPWD'::GMS_encryptPWD
+!MS$ATTRIBUTES REFERENCE :: szPwd
+!MS$ATTRIBUTES REFERENCE :: szEncrypt
+      END FUNCTION
+      END INTERFACE
+C------------------------------------------------------- GMS_openDatabase
+!MS$ATTRIBUTES IMPORT :: GMS_openDatabase
+      INTERFACE
+      INTEGER*4 FUNCTION GMS_openDatabase(INIFILE)
+      CHARACTER*(*) INIFILE
+!MS$ATTRIBUTES STDCALL, ALIAS:'GMS_openDatabase'::GMS_openDatabase
+!MS$ATTRIBUTES REFERENCE :: INIFILE
+      END FUNCTION
+      END INTERFACE
+C------------------------------------------------------- GMS_openDatabase2
+!MS$ATTRIBUTES IMPORT :: GMS_openDatabase2
+      INTERFACE
+      INTEGER*4 FUNCTION
+     &GMS_openDatabase2(INIFILE,UNAME,UPSSWD,USERID)
+      USE GMS_STRUCTURES
+      CHARACTER*(*) INIFILE,UNAME,UPSSWD
+      INTEGER*4 USERID
+!MS$ATTRIBUTES STDCALL, ALIAS:'GMS_openDatabase2'::GMS_openDatabase2
+!MS$ATTRIBUTES REFERENCE :: INIFILE
+!MS$ATTRIBUTES REFERENCE :: UNAME
+!MS$ATTRIBUTES REFERENCE :: UPSSWD
+!MS$ATTRIBUTES REFERENCE :: USERID
+      END FUNCTION
+      END INTERFACE
+C------------------------------------------------------- GMS_findName
+!MS$ATTRIBUTES IMPORT :: GMS_findName
+      INTERFACE
+      INTEGER*4 FUNCTION GMS_findName(NAME,DName,ANAME,LName,FIND)
+      USE GMS_STRUCTURES
+      CHARACTER*(*) NAME,ANAME
+      INTEGER*4 LName,FIND
+      TYPE(GMS_NAMEDATA) DName
+!MS$ATTRIBUTES STDCALL, ALIAS:'GMS_findName'::GMS_findName
+!MS$ATTRIBUTES VALUE :: LName
+!MS$ATTRIBUTES VALUE :: FIND
+!MS$ATTRIBUTES REFERENCE :: NAME
+!MS$ATTRIBUTES REFERENCE :: ANAME
+!MS$ATTRIBUTES REFERENCE :: DName
+      END FUNCTION
+      END INTERFACE
+C------------------------------------------------------- GMS_findName2
+!MS$ATTRIBUTES IMPORT :: GMS_findName2
+      INTERFACE
+      INTEGER*4 FUNCTION GMS_findName2(NAME,DName,GERM,ANAME,LName,FIND)
+      USE GMS_STRUCTURES
+      CHARACTER NAME*(*), ANAME*(*)
+      INTEGER*4 LName,FIND
+      TYPE(GMS_NAMEDATA) DName
+      TYPE(GMS_GERMPLASM) GERM
+!MS$ATTRIBUTES STDCALL, ALIAS:'GMS_findName2'::GMS_findName2
+!MS$ATTRIBUTES VALUE :: LName
+!MS$ATTRIBUTES VALUE :: FIND
+!MS$ATTRIBUTES REFERENCE :: NAME
+!MS$ATTRIBUTES REFERENCE :: ANAME
+!MS$ATTRIBUTES REFERENCE :: DName
+!MS$ATTRIBUTES REFERENCE :: GERM
+      END FUNCTION
+      END INTERFACE
+C------------------------------------------------------- GMS_findName3
+!MS$ATTRIBUTES IMPORT :: GMS_findName3
+      INTERFACE
+      INTEGER*4 FUNCTION GMS_findName3(NAME,DName,GERM,ANAME,LName,FIND)
+      USE GMS_STRUCTURES
+      CHARACTER NAME*(*), ANAME*(*)
+      INTEGER*4 LName,FIND
+      TYPE(GMS_NAMEDATA) DName
+      TYPE(GMS_GERMPLASM) GERM
+!MS$ATTRIBUTES STDCALL, ALIAS:'GMS_findName3'::GMS_findName3
+!MS$ATTRIBUTES VALUE :: LName
+!MS$ATTRIBUTES VALUE :: FIND
+!MS$ATTRIBUTES REFERENCE :: NAME
+!MS$ATTRIBUTES REFERENCE :: ANAME
+!MS$ATTRIBUTES REFERENCE :: DName
+!MS$ATTRIBUTES REFERENCE :: GERM
+      END FUNCTION
+      END INTERFACE
+C------------------------------------------------------- GMS_findDescendant
+!MS$ATTRIBUTES IMPORT :: GMS_findDescendant
+      INTERFACE
+      INTEGER*4 FUNCTION GMS_findDescendant(IGID,GERM,NPRG,IOPT)
+      USE GMS_STRUCTURES
+      INTEGER*4 IGID,IOPT,NPRG
+      TYPE(GMS_GERMPLASM) GERM
+!MS$ATTRIBUTESSTDCALL,ALIAS:'GMS_findDescendant'::GMS_findDescendant
+!MS$ATTRIBUTES VALUE :: IGID
+!MS$ATTRIBUTES REFERENCE :: GERM
+!MS$ATTRIBUTES REFERENCE :: NPRG
+!MS$ATTRIBUTES VALUE :: IOPT
+      END FUNCTION
+      END INTERFACE
+C------------------------------------------------------- GMS_findGermplasm
+!MS$ATTRIBUTES IMPORT :: GMS_findGermplasm
+      INTERFACE
+      INTEGER*4 FUNCTION GMS_findGermplasm(GERM,IOPT)
+      USE GMS_STRUCTURES
+      INTEGER*4 IOPT
+      TYPE(GMS_GERMPLASM) GERM
+!MS$ATTRIBUTESSTDCALL,ALIAS:'GMS_findGermplasm'::GMS_findGermplasm
+!MS$ATTRIBUTES REFERENCE :: GERM
+!MS$ATTRIBUTES VALUE :: IOPT
+      END FUNCTION
+      END INTERFACE
+C------------------------------------------------------- GMS_findLocation
+!MS$ATTRIBUTES IMPORT :: GMS_findLocation
+      INTERFACE
+      INTEGER*4 FUNCTION GMS_findLocation(LOCN,FOPT)
+      USE GMS_STRUCTURES
+      INTEGER*4 FOPT
+      TYPE(GMS_LOCATION) LOCN
+!MS$ATTRIBUTES STDCALL,ALIAS:'GMS_findLocation'::GMS_findLocation
+!MS$ATTRIBUTES REFERENCE :: LOCN
+!MS$ATTRIBUTES VALUE :: FOPT
+      END FUNCTION
+      END INTERFACE
+C------------------------------------------------------- GMS_findCIDSID
+!MS$ATTRIBUTES IMPORT :: GMS_findCIDSID
+      INTERFACE
+      INTEGER*4 FUNCTION GMS_findCIDSID(CID,SID,GID,FOPT)
+      INTEGER*4 CID,SID,GID,FOPT
+!MS$ATTRIBUTES STDCALL,ALIAS:'GMS_findCIDSID'::GMS_findCIDSID
+!MS$ATTRIBUTES REFERENCE :: CID
+!MS$ATTRIBUTES REFERENCE :: SID
+!MS$ATTRIBUTES REFERENCE :: GID
+!MS$ATTRIBUTES VALUE :: FOPT
+      END FUNCTION
+      END INTERFACE
+C------------------------------------------------------- GMS_findCIDSID
+!MS$ATTRIBUTES IMPORT :: GMS_getGermplasm
+      INTERFACE
+      INTEGER*4 FUNCTION GMS_getGermplasm(IGID,GERM)
+      USE GMS_STRUCTURES
+      INTEGER*4 IGID
+      TYPE(GMS_GERMPLASM) GERM
+!MS$ATTRIBUTES STDCALL,ALIAS:'GMS_getGermplasm'::GMS_getGermplasm
+!MS$ATTRIBUTES VALUE :: IGID
+!MS$ATTRIBUTES REFERENCE :: GERM
+      END FUNCTION
+      END INTERFACE
+C------------------------------------------------------- GMS_getGermplasm2
+!MS$ATTRIBUTES IMPORT :: GMS_getGermplasm2
+      INTERFACE
+      INTEGER*4 FUNCTION GMS_getGermplasm2(IGID,GERM,NAMDAT,ANAME,LEN)
+      USE GMS_STRUCTURES
+      CHARACTER ANAME*(*)
+      INTEGER*4 IGID,LEN
+      TYPE(GMS_GERMPLASM) GERM
+      TYPE(GMS_NAMEDATA) NAMDAT
+!MS$ATTRIBUTES STDCALL,ALIAS:'GMS_getGermplasm2'::GMS_getGermplasm2
+!MS$ATTRIBUTES VALUE :: IGID
+!MS$ATTRIBUTES REFERENCE :: GERM
+!MS$ATTRIBUTES REFERENCE :: NAMDAT
+!MS$ATTRIBUTES REFERENCE :: ANAME
+!MS$ATTRIBUTES VALUE :: LEN
+      END FUNCTION
+      END INTERFACE
+C------------------------------------------------------- GMS_getProgenitorID
+!MS$ATTRIBUTES IMPORT :: GMS_getProgenitorID
+      INTERFACE
+      INTEGER*4 FUNCTION GMS_getProgenitorID(IGID,INO,JGID)
+      USE GMS_STRUCTURES
+      INTEGER*4 IGID,JGID
+!MS$ATTRIBUTES STDCALL,ALIAS:'GMS_getProgenitorID'::GMS_getProgenitorID
+!MS$ATTRIBUTES VALUE :: IGID
+!MS$ATTRIBUTES REFERENCE :: JGID
+!MS$ATTRIBUTES VALUE :: INO
+      END FUNCTION
+      END INTERFACE
+C------------------------------------------------------- GMS_getName
+!MS$ATTRIBUTES IMPORT :: GMS_getName
+      INTERFACE
+      INTEGER*4 FUNCTION GMS_getName(NAMDAT,NVAL,LEN,FOPT)
+      USE GMS_STRUCTURES
+      INTEGER*4 LEN,FOPT
+      CHARACTER NVAL*(*)
+      TYPE(GMS_NAMEDATA) NAMDAT
+!MS$ATTRIBUTES STDCALL,ALIAS:'GMS_getName'::GMS_getName
+!MS$ATTRIBUTES REFERENCE :: NAMDAT
+!MS$ATTRIBUTES REFERENCE :: NVAL
+!MS$ATTRIBUTES VALUE :: LEN
+!MS$ATTRIBUTES VALUE :: FOPT
+      END FUNCTION
+      END INTERFACE
+C------------------------------------------------------- GMS_getNameRecord
+!MS$ATTRIBUTES IMPORT :: GMS_getNameRecord
+      INTERFACE
+      INTEGER*4 FUNCTION GMS_getNameRecord(NAMDAT,NVAL,LEN)
+      USE GMS_STRUCTURES
+      INTEGER*4 LEN
+      CHARACTER NVAL*(*)
+      TYPE(GMS_NAMEDATA) NAMDAT
+!MS$ATTRIBUTES STDCALL,ALIAS:'GMS_getNameRecord'::GMS_getNameRecord
+!MS$ATTRIBUTES REFERENCE :: NAMDAT
+!MS$ATTRIBUTES REFERENCE :: NVAL
+!MS$ATTRIBUTES VALUE :: LEN
+      END FUNCTION
+      END INTERFACE
+C------------------------------------------------------- GMS_getAttribute
+!MS$ATTRIBUTES IMPORT :: GMS_getAttribute
+      INTERFACE
+      INTEGER*4 FUNCTION GMS_getAttribute(ATTB,AVAL,LEN,FOPT)
+      USE GMS_STRUCTURES
+      INTEGER*4 LEN,FOPT
+      CHARACTER AVAL*(*)
+      TYPE(GMS_ATTRIBUTE) ATTB
+!MS$ATTRIBUTES STDCALL,ALIAS:'GMS_getAttribute'::GMS_getAttribute
+!MS$ATTRIBUTES REFERENCE :: ATTB
+!MS$ATTRIBUTES REFERENCE :: AVAL
+!MS$ATTRIBUTES VALUE :: LEN
+!MS$ATTRIBUTES VALUE :: FOPT
+      END FUNCTION
+      END INTERFACE
+C------------------------------------------------------- GMS_getMethod
+!MS$ATTRIBUTES IMPORT :: GMS_getMethod
+      INTERFACE
+      INTEGER*4 FUNCTION GMS_getMethod(METH,MDES,LEN,FOPT)
+      USE GMS_STRUCTURES
+      INTEGER*4 LEN,FOPT
+      CHARACTER MDES*(*)
+      TYPE(GMS_METHOD) METH
+!MS$ATTRIBUTES STDCALL,ALIAS:'GMS_getMethod'::GMS_getMethod
+!MS$ATTRIBUTES REFERENCE :: METH
+!MS$ATTRIBUTES REFERENCE :: MDES
+!MS$ATTRIBUTES VALUE :: LEN
+!MS$ATTRIBUTES VALUE :: FOPT
+      END FUNCTION
+      END INTERFACE
+C------------------------------------------------------- GMS_getUDField
+!MS$ATTRIBUTES IMPORT :: GMS_getUDField
+      INTERFACE
+      INTEGER*4 FUNCTION GMS_getUDField(UDFLD,FDES,LEN,FOPT)
+      USE GMS_STRUCTURES
+      INTEGER*4 LEN,FOPT
+      CHARACTER FDES*(*)
+      TYPE(GMS_UDFIELD) UDFLD
+!MS$ATTRIBUTES STDCALL,ALIAS:'GMS_getUDField'::GMS_getUDField
+!MS$ATTRIBUTES REFERENCE :: UDFLD
+!MS$ATTRIBUTES REFERENCE :: FDES
+!MS$ATTRIBUTES VALUE :: LEN
+!MS$ATTRIBUTES VALUE :: FOPT
+      END FUNCTION
+      END INTERFACE
+C------------------------------------------------------- GMS_getBibrefs
+!MS$ATTRIBUTES IMPORT :: GMS_getBibrefs
+      INTERFACE
+      INTEGER*4 FUNCTION GMS_getBibrefs(BREFS,FOPT)
+      USE GMS_STRUCTURES
+      INTEGER*4 FOPT
+      TYPE(GMS_BIBREFS) BREFS
+!MS$ATTRIBUTES STDCALL,ALIAS:'GMS_getBibrefs'::GMS_getBibrefs
+!MS$ATTRIBUTES REFERENCE :: BREFS
+!MS$ATTRIBUTES VALUE :: FOPT
+      END FUNCTION
+      END INTERFACE
+
+C------------------------------------------------------- GMS_getLocation
+!MS$ATTRIBUTES IMPORT :: GMS_getLocation
+      INTERFACE
+      INTEGER*4 FUNCTION GMS_getLocation(LOCN,FOPT)
+      USE GMS_STRUCTURES
+      INTEGER*4 FOPT
+      TYPE(GMS_LOCATION) LOCN
+!MS$ATTRIBUTES STDCALL,ALIAS:'GMS_getLocation'::GMS_getLocation
+!MS$ATTRIBUTES REFERENCE :: LOCN
+!MS$ATTRIBUTES VALUE :: FOPT
+      END FUNCTION
+      END INTERFACE
+C------------------------------------------------------- GMS_getLocation2
+!MS$ATTRIBUTES IMPORT :: GMS_getLocation2
+      INTERFACE
+      INTEGER*4 FUNCTION GMS_getLocation2(LOCN,FOPT)
+      USE GMS_STRUCTURES
+      INTEGER*4 FOPT
+      TYPE(GMS_LOCATION) LOCN
+!MS$ATTRIBUTES STDCALL,ALIAS:'GMS_getLocation2'::GMS_getLocation2
+!MS$ATTRIBUTES REFERENCE :: LOCN
+!MS$ATTRIBUTES VALUE :: FOPT
+      END FUNCTION
+      END INTERFACE
+C------------------------------------------------------- GMS_getUser
+!MS$ATTRIBUTES IMPORT :: GMS_getUser
+      INTERFACE
+      INTEGER*4 FUNCTION GMS_getUser(USER,FOPT)
+      USE GMS_STRUCTURES
+      INTEGER*4 FOPT
+      TYPE(GMS_USER) USER
+!MS$ATTRIBUTES STDCALL,ALIAS:'GMS_getUser'::GMS_getUser
+!MS$ATTRIBUTES REFERENCE :: USER
+!MS$ATTRIBUTES VALUE :: FOPT
+      END FUNCTION
+      END INTERFACE
+C------------------------------------------------------- GMS_getInstallation
+!MS$ATTRIBUTES IMPORT :: GMS_getInstallation
+      INTERFACE
+      INTEGER*4 FUNCTION GMS_getInstallation(INST,DESC,IDESC)
+      USE GMS_STRUCTURES
+      INTEGER*4 IDESC
+      CHARACTER DESC*(*)
+      TYPE(GMS_INSTALLATION) INST
+!MS$ATTRIBUTES STDCALL,ALIAS:'GMS_getInstallation'::GMS_getInstallation
+!MS$ATTRIBUTES REFERENCE :: INST
+!MS$ATTRIBUTES REFERENCE :: DESC
+!MS$ATTRIBUTES VALUE :: IDESC
+      END FUNCTION
+      END INTERFACE
+C------------------------------------------------------- GMS_addGermplasm
+!MS$ATTRIBUTES IMPORT :: GMS_addGermplasm
+      INTERFACE
+      INTEGER*4 FUNCTION GMS_addGermplasm(GERM,DName,ANAME,PIDS)
+      USE GMS_STRUCTURES
+      TYPE(GMS_GERMPLASM) GERM
+      TYPE(GMS_NAMEDATA) DName
+      CHARACTER ANAME*(*)
+      INTEGER*4 PIDS(2)
+!MS$ATTRIBUTES STDCALL, ALIAS:'GMS_addGermplasm'::GMS_addGermplasm
+!MS$ATTRIBUTES REFERENCE :: ANAME
+!MS$ATTRIBUTES REFERENCE :: DName
+!MS$ATTRIBUTES REFERENCE :: GERM
+!MS$ATTRIBUTES REFERENCE :: PIDS
+      END FUNCTION
+      END INTERFACE
+C------------------------------------------------------- GMS_addName
+!MS$ATTRIBUTES IMPORT :: GMS_addName
+      INTERFACE
+      INTEGER*4 FUNCTION GMS_addName(DName,AName)
+      USE GMS_STRUCTURES
+      CHARACTER  AName*(*)
+      TYPE(GMS_NAMEDATA) DName
+!MS$ATTRIBUTES STDCALL,ALIAS:'GMS_addName'::GMS_addName
+!MS$ATTRIBUTES REFERENCE :: DName
+!MS$ATTRIBUTES REFERENCE :: AName
+      END FUNCTION
+      END INTERFACE
+C------------------------------------------------------- GMS_addAttribute
+!MS$ATTRIBUTES IMPORT :: GMS_addAttribute
+      INTERFACE
+      INTEGER*4 FUNCTION GMS_addAttribute(ATTB,AVAL)
+      USE GMS_STRUCTURES
+      CHARACTER AVAL*(*)
+      TYPE(GMS_ATTRIBUTE) ATTB
+!MS$ATTRIBUTES STDCALL,ALIAS:'GMS_addAttribute'::GMS_addAttribute
+!MS$ATTRIBUTES REFERENCE :: ATTB
+!MS$ATTRIBUTES REFERENCE :: AVAL
+      END FUNCTION
+      END INTERFACE
+C------------------------------------------------------- GMS_addLocation
+!MS$ATTRIBUTES IMPORT :: GMS_addLocation
+      INTERFACE
+      INTEGER*4 FUNCTION GMS_addLocation(LOCN)
+      USE GMS_STRUCTURES
+      TYPE(GMS_LOCATION) LOCN
+!MS$ATTRIBUTES STDCALL,ALIAS:'GMS_addLocation'::GMS_addLocation
+!MS$ATTRIBUTES REFERENCE :: LOCN
+      END FUNCTION
+      END INTERFACE
+C------------------------------------------------------- GMS_addUser
+!MS$ATTRIBUTES IMPORT :: GMS_addUser
+      INTERFACE
+      INTEGER*4 FUNCTION GMS_addUser(USER,ENAME,SECURITY)
+      USE GMS_STRUCTURES
+      CHARACTER ENAME*(*)
+      INTEGER*4 SECURITY
+      TYPE(GMS_USER) USER
+!MS$ATTRIBUTES STDCALL,ALIAS:'GMS_addUser'::GMS_addUser
+!MS$ATTRIBUTES REFERENCE :: USER
+!MS$ATTRIBUTES REFERENCE :: ENAME
+!MS$ATTRIBUTES VALUE :: SECURITY
+      END FUNCTION
+      END INTERFACE
+C------------------------------------------------------- GMS_setProgenitorID
+!MS$ATTRIBUTES IMPORT :: GMS_setProgenitorID
+      INTERFACE
+      INTEGER*4 FUNCTION GMS_setProgenitorID(GID,PNO,PGID)
+      INTEGER*4 GID,PNO,PGID
+!MS$ATTRIBUTES STDCALL,ALIAS:'GMS_setProgenitorID'::GMS_setProgenitorID
+!MS$ATTRIBUTES VALUE :: GID
+!MS$ATTRIBUTES VALUE :: PNO
+!MS$ATTRIBUTES VALUE :: PGID
+      END FUNCTION
+      END INTERFACE
+C------------------------------------------------------- GMSC_setProgenitorID
+!MS$ATTRIBUTES IMPORT :: GMSC_setProgenitorID
+      INTERFACE
+      INTEGER*4 FUNCTION GMSC_setProgenitorID(GID,PNO,PGID)
+      INTEGER*4 GID,PNO,PGID
+!MS$ATTRIBUTES STDCALL,ALIAS:'GMSC_setProgenitorID'::GMSC_setProgenitorID
+!MS$ATTRIBUTES VALUE :: GID
+!MS$ATTRIBUTES VALUE :: PNO
+!MS$ATTRIBUTES VALUE :: PGID
+      END FUNCTION
+      END INTERFACE
+C------------------------------------------------------- GMS_setGermplasm
+!MS$ATTRIBUTES IMPORT :: GMS_setGermplasm
+      INTERFACE
+      INTEGER*4 FUNCTION GMS_setGermplasm(GERM)
+      USE GMS_STRUCTURES
+      TYPE (GMS_GERMPLASM) GERM
+!MS$ATTRIBUTES STDCALL,ALIAS:'GMS_setGermplasm'::GMS_setGermplasm
+!MS$ATTRIBUTES REFERENCE :: GERM
+      END FUNCTION
+      END INTERFACE
+C------------------------------------------------------- GMS_setName
+!MS$ATTRIBUTES IMPORT :: GMS_setName
+      INTERFACE
+      INTEGER*4 FUNCTION GMS_setName(NAMD,AVAL,LEN)
+      USE GMS_STRUCTURES
+      INTEGER*4 LEN
+      CHARACTER*(*) AVAL
+      TYPE (GMS_NAMEDATA) NAMD
+!MS$ATTRIBUTES STDCALL,ALIAS:'GMS_setName'::GMS_setName
+!MS$ATTRIBUTES REFERENCE :: NAMD
+!MS$ATTRIBUTES REFERENCE :: AVAL
+!MS$ATTRIBUTES VALUE :: LEN
+      END FUNCTION
+      END INTERFACE
+C------------------------------------------------------- GMSC_setGermplasm
+!MS$ATTRIBUTES IMPORT :: GMSC_setGermplasm
+      INTERFACE
+      INTEGER*4 FUNCTION GMSC_setGermplasm(GERM)
+      USE GMS_STRUCTURES
+      TYPE (GMS_GERMPLASM) GERM
+!MS$ATTRIBUTES STDCALL,ALIAS:'GMSC_setGermplasm'::GMSC_setGermplasm
+!MS$ATTRIBUTES REFERENCE :: GERM
+      END FUNCTION
+      END INTERFACE
+C------------------------------------------------------- GMS_setPreferredName
+!MS$ATTRIBUTES IMPORT :: GMS_setPreferredName
+      INTERFACE
+      INTEGER*4 FUNCTION GMS_setPreferredName(NAMDAT,ANAME)
+      USE GMS_STRUCTURES
+      TYPE (GMS_NAMEDATA) NAMDAT
+      CHARACTER ANAME*(*)
+!MS$ATTRIBUTES STDCALL,ALIAS:'GMS_setPreferredName'::GMS_setPreferredName
+!MS$ATTRIBUTES REFERENCE :: NAMDAT
+!MS$ATTRIBUTES REFERENCE :: ANAME
+      END FUNCTION
+      END INTERFACE
+C------------------------------------------------------- GMS_setPreferredAbbr
+!MS$ATTRIBUTES IMPORT :: GMS_setPreferredAbbr
+      INTERFACE
+      INTEGER*4 FUNCTION GMS_setPreferredAbbr(NAMDAT,ANAME)
+      USE GMS_STRUCTURES
+      TYPE (GMS_NAMEDATA) NAMDAT
+      CHARACTER ANAME*(*)
+!MS$ATTRIBUTES STDCALL,ALIAS:'GMS_setPreferredAbbr'::GMS_setPreferredAbbr
+!MS$ATTRIBUTES REFERENCE :: NAMDAT
+!MS$ATTRIBUTES REFERENCE :: ANAME
+      END FUNCTION
+      END INTERFACE
+C------------------------------------------------------- GMS_applyChanges
+!MS$ATTRIBUTES IMPORT :: GMS_applyChanges
+      INTERFACE
+      INTEGER*4 FUNCTION GMS_applyChanges(GERM)
+      USE GMS_STRUCTURES
+      TYPE (GMS_GERMPLASM) GERM
+!MS$ATTRIBUTES STDCALL,ALIAS:'GMS_applyChanges'::GMS_applyChanges
+!MS$ATTRIBUTES REFERENCE :: GERM
+      END FUNCTION
+      END INTERFACE
+C------------------------------------------------------- GMS_addListName
+!MS$ATTRIBUTES IMPORT :: GMS_addListName
+      INTERFACE
+      INTEGER*4 FUNCTION GMS_addListName(LNAME)
+      USE GMS_STRUCTURES
+      TYPE (GMS_LISTNAME) LNAME
+!MS$ATTRIBUTES STDCALL,ALIAS:'GMS_addListName'::GMS_addListName
+!MS$ATTRIBUTES REFERENCE :: LNAME
+      END FUNCTION
+      END INTERFACE
+C------------------------------------------------------- GMS_getListName
+!MS$ATTRIBUTES IMPORT :: GMS_getListName
+      INTERFACE
+      INTEGER*4 FUNCTION GMS_getListName(LNAME,IOPT)
+      USE GMS_STRUCTURES
+      INTEGER*4 IOPT
+      TYPE (GMS_LISTNAME) LNAME
+!MS$ATTRIBUTES STDCALL,ALIAS:'GMS_getListName'::GMS_getListName
+!MS$ATTRIBUTES REFERENCE :: LNAME
+!MS$ATTRIBUTES VALUE :: IOPT
+      END FUNCTION
+      END INTERFACE
+C------------------------------------------------------- GMS_setListName
+!MS$ATTRIBUTES IMPORT :: GMS_setListName
+      INTERFACE
+      INTEGER*4 FUNCTION GMS_setListName(LNAME)
+      USE GMS_STRUCTURES
+      TYPE (GMS_LISTNAME) LNAME
+!MS$ATTRIBUTES STDCALL,ALIAS:'GMS_setListName'::GMS_setListName
+!MS$ATTRIBUTES REFERENCE :: LNAME
+      END FUNCTION
+      END INTERFACE
+C------------------------------------------------------- GMS_addListData
+!MS$ATTRIBUTES IMPORT :: GMS_addListData
+      INTERFACE
+      INTEGER*4 FUNCTION GMS_addListData(LDATA)
+      USE GMS_STRUCTURES
+      TYPE (GMS_LISTDATA) LDATA
+!MS$ATTRIBUTES STDCALL,ALIAS:'GMS_addListData'::GMS_addListData
+!MS$ATTRIBUTES REFERENCE :: LDATA
+      END FUNCTION
+      END INTERFACE
+C------------------------------------------------------- GMS_getListData
+!MS$ATTRIBUTES IMPORT :: GMS_getListData
+      INTERFACE
+      INTEGER*4 FUNCTION GMS_getListData(LDATA,FOPT)
+      USE GMS_STRUCTURES
+      TYPE (GMS_LISTDATA) LDATA
+      INTEGER*4 FOPT
+!MS$ATTRIBUTES STDCALL,ALIAS:'GMS_getListData'::GMS_getListData
+!MS$ATTRIBUTES REFERENCE :: LDATA
+!MS$ATTRIBUTES VALUE :: FOPT
+      END FUNCTION
+      END INTERFACE
+C------------------------------------------------------- GMS_findListData
+!MS$ATTRIBUTES IMPORT :: GMS_findListData
+      INTERFACE
+      INTEGER*4 FUNCTION GMS_findListData(LDATA,FOPT)
+      USE GMS_STRUCTURES
+      TYPE (GMS_LISTDATA) LDATA
+      INTEGER*4 FOPT
+!MS$ATTRIBUTES STDCALL,ALIAS:'GMS_findListData'::GMS_findListData
+!MS$ATTRIBUTES REFERENCE :: LDATA
+!MS$ATTRIBUTES VALUE :: FOPT
+      END FUNCTION
+      END INTERFACE      
+C------------------------------------------------------- GMS_setListData
+!MS$ATTRIBUTES IMPORT :: GMS_setListData
+      INTERFACE
+      INTEGER*4 FUNCTION GMS_setListData(LDATA)
+      USE GMS_STRUCTURES
+      TYPE (GMS_LISTDATA) LDATA
+!MS$ATTRIBUTES STDCALL,ALIAS:'GMS_setListData'::GMS_setListData
+!MS$ATTRIBUTES REFERENCE :: LDATA
+      END FUNCTION
+      END INTERFACE
+C------------------------------------------------------- GMS_commitData
+!MS$ATTRIBUTES IMPORT :: GMS_commitData
+      INTERFACE
+      SUBROUTINE GMS_commitData()
+!MS$ATTRIBUTES STDCALL, ALIAS:'GMS_commitData'::GMS_commitData
+      END SUBROUTINE
+      END INTERFACE
+C------------------------------------------------------- GMS_rollbackData
+!MS$ATTRIBUTES IMPORT :: GMS_rollbackData
+      INTERFACE
+      SUBROUTINE GMS_rollbackData()
+!MS$ATTRIBUTES STDCALL, ALIAS:'GMS_rollbackData'::GMS_rollbackData
+      END SUBROUTINE
+      END INTERFACE
+C------------------------------------------------------- GMS_closeDatabase
+!MS$ATTRIBUTES IMPORT :: GMS_closeDatabase
+      INTERFACE
+      SUBROUTINE GMS_closeDatabase()
+!MS$ATTRIBUTES STDCALL, ALIAS:'GMS_closeDatabase'::GMS_closeDatabase
+      END SUBROUTINE
+      END INTERFACE
+C------------------------------------------------------- GMS_generateTree
+!MS$ATTRIBUTES IMPORT :: GMS_generateTree
+      INTERFACE
+      INTEGER*4 FUNCTION GMS_generateTree(GID,LVL,TREE,LTREE,LIST,NLST)
+      CHARACTER TREE*(*)
+      INTEGER*4 GID,LVL,LTREE,LIST(*)
+!MS$ATTRIBUTES STDCALL,ALIAS:'GMS_generateTree'::GMS_generateTree
+!MS$ATTRIBUTES REFERENCE :: TREE
+!MS$ATTRIBUTES REFERENCE :: LIST
+!MS$ATTRIBUTES VALUE :: GID
+!MS$ATTRIBUTES VALUE :: LVL
+!MS$ATTRIBUTES VALUE :: LTREE
+!MS$ATTRIBUTES VALUE :: NLST
+      END FUNCTION
+      END INTERFACE
+C------------------------------------------------------- GMS_computeGenerationNo
+!MS$ATTRIBUTES IMPORT :: GMS_computeGenerationNo
+      INTERFACE
+      INTEGER*4 FUNCTION GMS_computeGenerationNo
+     &                   (GID,LSPS,NGEN,MAN,NBC,LDM,MCR)
+      INTEGER*4 GID,LSPS,NGEN,LDM,MCR,MAN,NBC
+!MS$ATTRIBUTES STDCALL,ALIAS:'GMS_computeGenerationNo'::GMS_computeGenerationNo
+!MS$ATTRIBUTES VALUE :: GID
+!MS$ATTRIBUTES REFERENCE :: LSPS
+!MS$ATTRIBUTES REFERENCE :: NGEN
+!MS$ATTRIBUTES REFERENCE :: MAN
+!MS$ATTRIBUTES REFERENCE :: NBC
+!MS$ATTRIBUTES REFERENCE :: LDM
+!MS$ATTRIBUTES REFERENCE :: MCR
+      END FUNCTION
+      END INTERFACE
+C------------------------------------------------------- GMS_crossExpansion
+!MS$ATTRIBUTES IMPORT :: GMS_crossExpansion
+      INTERFACE
+      INTEGER*4 FUNCTION
+     &GMS_crossExpansion(GID,LVL,NTYPE,CROSS,LCROSS,LIST,NLST)
+      CHARACTER CROSS*(*)
+      INTEGER*4 GID,NTYPE,LVL,LCROSS,LIST(*)
+!MS$ATTRIBUTES STDCALL,ALIAS:'GMS_crossExpansion'::GMS_crossExpansion
+!MS$ATTRIBUTES REFERENCE :: CROSS
+!MS$ATTRIBUTES REFERENCE :: LIST
+!MS$ATTRIBUTES VALUE :: GID
+!MS$ATTRIBUTES VALUE :: LVL
+!MS$ATTRIBUTES VALUE :: NTYPE
+!MS$ATTRIBUTES VALUE :: LCROSS
+!MS$ATTRIBUTES VALUE :: NLST
+      END FUNCTION
+      END INTERFACE
+C------------------------------------------------------- GMS_listNames
+!MS$ATTRIBUTES IMPORT :: GMS_listNames
+      INTERFACE
+      INTEGER*4 FUNCTION GMS_listNames(GID,NAMES,LNAMES)
+      CHARACTER NAMES*(*)
+      INTEGER*4 GID,LNAMES
+!MS$ATTRIBUTES STDCALL,ALIAS:'GMS_listNames'::GMS_listNames
+!MS$ATTRIBUTES REFERENCE :: NAMES
+!MS$ATTRIBUTES VALUE :: GID
+!MS$ATTRIBUTES VALUE :: LNAMES
+      END FUNCTION
+      END INTERFACE
+C------------------------------------------------------- GMS_listNamesEx
+!MS$ATTRIBUTES IMPORT :: GMS_listNamesEx
+      INTERFACE
+      INTEGER*4 FUNCTION GMS_listNamesEx(GID,NAMES,LNAMES,DELIM)
+      CHARACTER NAMES*(*),DELIM*(*)
+      INTEGER*4 GID,LNAMES
+!MS$ATTRIBUTES STDCALL,ALIAS:'GMS_listNamesEx'::GMS_listNamesEx
+!MS$ATTRIBUTES REFERENCE :: NAMES
+!MS$ATTRIBUTES VALUE :: GID
+!MS$ATTRIBUTES VALUE :: LNAMES
+!MS$ATTRIBUTES REFERENCE :: DELIM
+      END FUNCTION
+      END INTERFACE
+C------------------------------------------------------- GMS_date
+!MS$ATTRIBUTES IMPORT :: GMS_date
+      INTERFACE
+      INTEGER*4 FUNCTION GMS_date(YEAR,MONTH,DAY)
+      INTEGER*4 YEAR,MONTH,DAY
+!MS$ATTRIBUTES STDCALL,ALIAS:'GMS_date'::GMS_date
+!MS$ATTRIBUTES VALUE :: YEAR
+!MS$ATTRIBUTES VALUE :: MONTH
+!MS$ATTRIBUTES VALUE :: DAY
+      END FUNCTION
+      END INTERFACE
+C------------------------------------------------------- GMS_getDate
+!MS$ATTRIBUTES IMPORT :: GMS_getDate
+      INTERFACE
+      INTEGER*4 FUNCTION GMS_getDate
+!MS$ATTRIBUTES STDCALL,ALIAS:'GMS_getDate'::GMS_getDate
+      END FUNCTION
+      END INTERFACE
+C------------------------------------------------------- GMS_getTime
+!MS$ATTRIBUTES IMPORT :: GMS_getTime
+      INTERFACE
+      INTEGER*4 FUNCTION GMS_getTime
+!MS$ATTRIBUTES STDCALL,ALIAS:'GMS_getTime'::GMS_getTime
+      END FUNCTION
+      END INTERFACE
+C------------------------------------------------------- GMS_strToDate
+!MS$ATTRIBUTES IMPORT :: GMS_strToDate
+      INTERFACE
+      INTEGER*4 FUNCTION GMS_strToDate(DATE)
+      CHARACTER DATE*(*)
+!MS$ATTRIBUTES STDCALL,ALIAS:'GMS_strToDate'::GMS_strToDate
+!MS$ATTRIBUTES REFERENCE :: DATE
+      END FUNCTION
+      END INTERFACE
+C------------------------------------------------------- GMS_expandDate
+!MS$ATTRIBUTES IMPORT :: GMS_expandDate
+      INTERFACE
+      INTEGER*4 FUNCTION GMS_expandDate(DATE,YEAR,MONTH,DAY)
+      INTEGER*4 DATE,YEAR,MONTH,DAY
+!MS$ATTRIBUTES STDCALL,ALIAS:'GMS_expandDate'::GMS_expandDate
+!MS$ATTRIBUTES VALUE :: DATE
+!MS$ATTRIBUTES REFERENCE :: YEAR
+!MS$ATTRIBUTES REFERENCE :: MONTH
+!MS$ATTRIBUTES REFERENCE :: DAY
+      END FUNCTION
+      END INTERFACE
+C------------------------------------------------------- GMS_validDate
+!MS$ATTRIBUTES IMPORT :: GMS_validDate
+      INTERFACE
+      INTEGER*4 FUNCTION GMS_validDate(YEAR,MONTH,DAY)
+      INTEGER*4 YEAR,MONTH,DAY
+!MS$ATTRIBUTES STDCALL,ALIAS:'GMS_validDate'::GMS_validDate
+!MS$ATTRIBUTES VALUE:: YEAR
+!MS$ATTRIBUTES VALUE:: MONTH
+!MS$ATTRIBUTES VALUE:: DAY
+      END FUNCTION
+      END INTERFACE
+C------------------------------------------------------- GMS_dateToStr
+!MS$ATTRIBUTES IMPORT :: GMS_dateToStr
+      INTERFACE
+      INTEGER*4 FUNCTION GMS_dateToStr(DATE,SDATE)
+      INTEGER*4 DATE
+      CHARACTER SDATE*(*)
+!MS$ATTRIBUTES STDCALL,ALIAS:'GMS_dateToStr'::GMS_dateToStr
+!MS$ATTRIBUTES VALUE:: DATE
+!MS$ATTRIBUTES REFERENCE:: SDATE
+      END FUNCTION
+      END INTERFACE
+C------------------------------------------------------- GMS_standardName
+!MS$ATTRIBUTES IMPORT :: GMS_standardName
+      INTERFACE
+      INTEGER*4 FUNCTION GMS_standardName(NAMIN,NAMOUT,LN)
+      INTEGER*4 LN
+      CHARACTER NAMIN*(*),NAMOUT*(*)
+!MS$ATTRIBUTES STDCALL,ALIAS:'GMS_standardName'::GMS_standardName
+!MS$ATTRIBUTES REFERENCE:: NAMIN
+!MS$ATTRIBUTES REFERENCE:: NAMOUT
+!MS$ATTRIBUTES VALUE:: LN
+      END FUNCTION
+      END INTERFACE
+C------------------------------------------------------- GMS_getHandles
+!MS$ATTRIBUTES IMPORT :: GMS_getHandles
+      INTERFACE
+      INTEGER*4 FUNCTION GMS_getHandles(CENTRALH,LOCALH)
+      INTEGER*4 CENTRALH,LOCALH
+!MS$ATTRIBUTES STDCALL,ALIAS:'GMS_getHandles'::GMS_getHandles
+!MS$ATTRIBUTES REFERENCE :: CENTRALH
+!MS$ATTRIBUTES REFERENCE :: LOCALH
+      END FUNCTION
+      END INTERFACE
+C------------------------------------------------------- GMS_addChanges
+!MS$ATTRIBUTES IMPORT :: GMS_addChanges
+      INTERFACE
+      INTEGER*4 FUNCTION GMS_addChanges(CHANGE,DESC)
+      USE GMS_STRUCTURES
+      TYPE (GMS_CHANGES) CHANGE
+      CHARACTER*(*) DESC
+!MS$ATTRIBUTES STDCALL,ALIAS:'GMS_addChanges'::GMS_addChanges
+!MS$ATTRIBUTES REFERENCE :: CHANGE
+!MS$ATTRIBUTES REFERENCE :: DESC
+      END FUNCTION
+      END INTERFACE
+C------------------------------------------------------- GMS_findChanges
+!MS$ATTRIBUTES IMPORT :: GMS_findChanges
+      INTERFACE
+      INTEGER*4 FUNCTION GMS_findChanges(CHANGE,DESC,LEN,IOPT)
+      USE GMS_STRUCTURES
+      TYPE (GMS_CHANGES) CHANGE
+      CHARACTER*(*) DESC
+      INTEGER*4 LEN,IOPT
+!MS$ATTRIBUTES STDCALL,ALIAS:'GMS_findChanges'::GMS_findChanges
+!MS$ATTRIBUTES REFERENCE :: CHANGE
+!MS$ATTRIBUTES REFERENCE :: DESC
+!MS$ATTRIBUTES VALUE:: LEN
+!MS$ATTRIBUTES VALUE:: IOPT
+      END FUNCTION
+      END INTERFACE
+C------------------------------------------------------- GMS_getDerivativeNbh
+!MS$ATTRIBUTES IMPORT :: GMS_getDerivativeNbh
+      INTERFACE
+      INTEGER*4 FUNCTION GMS_getDerivativeNbh
+     &(GID,MSTEP,NSTEP,LIST,NVALS,IDH)
+      INTEGER*4 GID,MSTEP,NSTEP,LIST(*),NVALS,IDH
+!MS$ATTRIBUTES STDCALL,ALIAS:'GMS_getDerivativeNbh'::GMS_getDerivativeNbh
+!MS$ATTRIBUTES VALUE:: GID
+!MS$ATTRIBUTES VALUE:: MSTEP
+!MS$ATTRIBUTES VALUE:: NSTEP
+!MS$ATTRIBUTES REFERENCE :: LIST
+!MS$ATTRIBUTES REFERENCE:: NVALS
+!MS$ATTRIBUTES VALUE:: IDH
+      END FUNCTION
+      END INTERFACE
+C------------------------------------------------------- GMS_getNextSequence
+!MS$ATTRIBUTES IMPORT :: GMS_getNextSequence
+      INTERFACE
+      INTEGER*4 FUNCTION GMS_getNextSequence(NTYPE,PREFIX,NEXT)
+      INTEGER*4 NTYPE,NEXT
+      CHARACTER*(*) PREFIX
+!MS$ATTRIBUTES STDCALL,ALIAS:'GMS_getNextSequence'::GMS_getNextSequence
+!MS$ATTRIBUTES VALUE:: NTYPE
+!MS$ATTRIBUTES REFERENCE :: PREFIX
+!MS$ATTRIBUTES REFERENCE:: NEXT
+      END FUNCTION
+      END INTERFACE                
+      END MODULE GMS_INTERFACE
+C******************************************************* GMS_TOOLS
+C  PURPOSE:
+C  COMMONLY USED GENERAL FUNCTIONS
+C---- LAST UPDATE 08/02/97 ----------------------------- GMS_TOOLS
+      MODULE GMS_TOOLS
+      CONTAINS
+C******************************************************* CTOFSTR
+C  PURPOSE:
+C  CONVERT A STRING FROM C TO FORTRAN FORMAT
+C
+C---- LAST UPDATE 06/03/99 ----------------------------- CTOFSTR
+      CHARACTER*256 FUNCTION CTOFSTR(CSTR)
+      CHARACTER CSTR*(*),NULL*1
+      DATA NULL/0/
+      I=INDEX(CSTR,NULL)-1
+      IF(I.LT.0) I=LEN(CSTR)
+      IF(I.GT.256) STOP 'CTOFSTR'
+      CTOFSTR=CSTR(1:I)
+      RETURN
+      END FUNCTION CTOFSTR
+C******************************************************* FTOCSTR
+C  PURPOSE:
+C  CONVERT A STRING FROM FORTRAN TO C FORMAT
+C
+C---- LAST UPDATE 06/03/99 ----------------------------- FTOCSTR
+      CHARACTER*256 FUNCTION FTOCSTR(FSTR)
+      CHARACTER FSTR*(*),NULL*1
+      DATA NULL/0/
+      I=LEN_TRIM(FSTR)
+      IF(I.GT.256) STOP 'FTOCSTR'
+      FTOCSTR=FSTR(1:I)//NULL
+      RETURN
+      END FUNCTION FTOCSTR
+C******************************************************* VARNAM
+C  PURPOSE:
+C  STANDARDIZE VARIETY NAMES
+C
+C  NOTATION: L IS A LETTER, N IS A NUMBER,
+C  S IS ONE OF -,.,',[,],+ AND ^ IS A SPACE
+C  1. CAPITALIZE ALL LETTERS
+C  2. CHANGE L( AND N( TO L^( OR N^(
+C  3. CHANGE )L AND )N TO )^L OR )^N
+C  4. CHANGE L. TO L^
+C  5. CHANGE LN TO L^N EXCEPT FOR SLN
+C  6. CHANGE NL TO N^L EXCEPT FOR SNL
+C  7. CHANGE LL-LL TO LL^LL
+C  8. CHAMGE ^0N TO ^N
+C  9. CHANGE ^^ TO ^
+C 10. CHANGE ^) TO ) AND ^/ TO /
+C 11. CHANGE (^ TO ( AND /^ TO /
+C 12. CHANGE L-N TO L^N EXCEPT FOR ^L-N OR WHEN THERE IS MORE
+C                       THAN ONE - IN THE NAME
+C---- LAST UPDATE 01/03/99 ----------------------------- VARNAM
+      CHARACTER*256 FUNCTION VARNAM(STRING)
+      USE GMS_INTERFACE
+      CHARACTER STRING*(*),CTMP*256,NULL*1
+      DATA NULL /0/
+      VARNAM=' '
+      L=LEN_TRIM(STRING)
+      STRING(L+1:L+1)=NULL
+      I4=GMS_standardName(STRING,CTMP,256)
+      IF(I4.NE.1) RETURN
+      L=INDEX(CTMP,NULL)
+      VARNAM=CTMP(1:L-1)
+      RETURN
+      END FUNCTION VARNAM
+C******************************************************* GETNOS
+C  PURPOSE:
+C  GET ACCESSION AND IRTP NUMBERS
+C
+C------------------------------------------------------- GETNOS
+      SUBROUTINE GETNOS(IGID,AVAL)
+      USE GMS_STRUCTURES
+      USE GMS_INTERFACE
+      CHARACTER AVAL*(*),INGERA*32,ACNO*32,NULL*1
+      INTEGER*4 FIND_FIRST,FIND_NEXT
+      TYPE(GMS_NAMEDATA) ACCDAT
+      TYPE(GMS_ATTRIBUTE) ATTB
+      DATA FIND_FIRST,FIND_NEXT,LN,NULL /0,1,32,0/
+      AVAL='('
+C  CHECK FOR ACCESSION NUMBER (TYPE 1)
+      ACCDAT%GERMPLASM=IGID
+      ACCDAT%TYPE=1
+      ACCDAT%STATUS=0
+      ACNO=' '//NULL
+      J=GMS_getName(ACCDAT,ACNO,LN,FIND_FIRST)
+      L=INDEX(ACNO,NULL)
+      IF(L.GT.0) ACNO(L:)=' '
+      IF(J.EQ.1) AVAL='('//ACNO
+      ACNO=AVAL
+C  CHECK FOR INGER ATTRIBUTES (TYPE 15)
+      J=1
+      ATTB%GERMPLASM=IGID
+      ATTB%TYPE=15
+      I=FIND_FIRST
+      DO WHILE (J.EQ.1)
+      INGERA=' '//NULL
+      J=GMS_getAttribute(ATTB,INGERA,LN,I)
+      I=FIND_NEXT
+      IF(J.EQ.1) ACNO=AVAL(1:LEN_TRIM(AVAL))//',IRTP'//INGERA(1:5)
+      AVAL=ACNO
+      IF(ACNO(1:2).EQ.'(,') AVAL='('//ACNO(3:)
+      END DO
+      AVAL=AVAL(1:LEN_TRIM(AVAL))//')'
+      IF(AVAL.EQ.'()') AVAL=' '
+      RETURN
+      END SUBROUTINE GETNOS
+C******************************************************* GETDATM
+C  PURPOSE:
+C  RETURN DATE AND TIME STRINGS
+C
+C  ARGUMENTS:
+C  CDATE - RETURNS WITH CURRENT DATE AS YYYY-MM-DD
+C  CTIME - RETURNS WITH CURRENT TIME AS HH:MM:SS
+C  IDTE - RETURNS WITH THE DATE AS INTEGER YYYYMMDD
+C  ITME - RETURNS WITH THE TIME AS INTEGER HHMMSS
+C------------------------------------------------------- GETDATM
+      SUBROUTINE GETDATM(CDATE,CTME,IDTE,ITME)
+      USE IFPORT
+      CHARACTER CDATE*(*),CTME*(*)
+      INTEGER*2 IY,IM,ID,IH,IN,IS,IT
+      CALL GETDAT(IY,IM,ID)
+      IDTE=IY*10000+IM*100+ID
+      CALL GETTIM(IH,IN,IS,IT)
+      ITME=IH*10000+IN*100+IS
+      WRITE(CDATE,'(3I3)') IH+100,IN+100,IS+100
+      CTME=CDATE(2:3)//':'//CDATE(5:6)//':'//CDATE(8:9)
+      WRITE(CDATE,'(I4,2I3)') IY,IM+100,ID+100
+      CDATE(5:5)='-'
+      CDATE(8:8)='-'
+      RETURN
+      END SUBROUTINE GETDATM
+C******************************************************* WRTGERM
+C  PURPOSE:
+C  DISPLAY GERMPLASM INFORMATION
+C
+C  ARGUMENTS:
+C  IGID- GID OG GERMPLASM TO BE DISPLAYED
+C  GERM- RETURNS WITH GERMPLASM DATA FOR GID IGID
+C  LU2 - LOGICAL UNIT FOR ALTERNATIVE PRINT ELSE 0
+C------------------------------------------------------- WRTGERM
+      SUBROUTINE WRTGERM(IGID,GERM,LU2)
+      USE GMS_STRUCTURES
+      USE GMS_INTERFACE
+      PARAMETER (MAXTREE=30000,MAXLIST=3000)
+      CHARACTER ANAME*256,PNAME*256,CTMP*7488,NULL*1,CWK*12,VIEWER*60   
+      CHARACTER GVIZPATH*60      
+      INTEGER CID,SID
+      TYPE(GMS_GERMPLASM) GERM,GERM1
+      TYPE(GMS_NAMEDATA) NAMDAT
+      TYPE(GMS_ATTRIBUTE) ATTB
+      TYPE(GMS_LOCATION) LOCN
+      TYPE(GMS_CHANGES) CHANGE
+      TYPE(GMS_BIBREFS) BREF
+      COMMON /OPTIONS/ NUID,NLOC,NREF,IOPT,LIST,ISRH,MGAT,NAMP,NTCX
+     &,IBTYPE,LDST,IYAL,NMSTD,VIEWER,GVIZPATH      
+      COMMON /WRK/ NLST,MXLST,LLST(MAXLIST),PNAME,ANAME,CTMP
+      DATA NULL /0/
+      I4=GMS_getGermplasm2(IGID,GERM,NAMDAT,ANAME,256)
+      IF(I4.NE.1) THEN
+      WRITE(0,*) ' *** WARNING *** NO DATA AVAILABLE (DELETED OR ERROR)'
+      RETURN
+      ENDIF
+C
+C  PRINT GERMPLASM INFORMATION FOR THE SELECTED OCCURANCE
+C
+ 24   I4=INDEX(ANAME,NULL)-1
+      PNAME=ANAME(1:I4)
+      CWK=FCODE(NAMDAT%TYPE)
+      WRITE(0,111) GERM%GERMPLASM_ID,CWK(1:LEN_TRIM(CWK)),PNAME(1:I4)
+      IF(LU2.NE.0) 
+     &WRITE(LU2,111) GERM%GERMPLASM_ID,CWK(1:LEN_TRIM(CWK)),PNAME(1:I4)
+ 111  FORMAT(1X,65(1H-),' GID:',I9/' PREFERRED_NAME (TYPE=',A,'):',A)
+      IF(GERM%NO_PROGENITORS.LT.0.AND.GERM%PROGENITOR_ID2.NE.0) THEN
+      I4=GMS_getGermplasm2(GERM%PROGENITOR_ID2,GERM1,NAMDAT,ANAME,256)
+      IF(I4.EQ.1) THEN
+      II=INDEX(ANAME,NULL)-1
+      WRITE(0,115) ' ',ANAME(1:II)
+      IF(LU2.NE.0) WRITE(LU2,115) ' ',ANAME(1:II)
+ 115  FORMAT(A,'SOURCE: ',A)
+      ENDIF
+      ENDIF
+C  GET CROSS EXPANSION      
+      IF(GERM%NO_PROGENITORS.GT.0) THEN !GERMPLASM IS GENERATIVE
+        CALL CROSSEXP(GERM%GERMPLASM_ID,1,NTCX,LU2)
+      ELSE IF(GERM%PROGENITOR_ID1.NE.0) THEN !DERIVATIVE WITH KNOWN GROUP
+        I4=GMS_getGermplasm2(GERM%PROGENITOR_ID1,GERM1,NAMDAT,ANAME,256)
+        IF(I4.EQ.1.AND.GERM1%NO_PROGENITORS.EQ.-1) THEN !THE KNOWN GROUP IS A DERIVATIVE GROUP SOURCE
+          II=INDEX(ANAME,NULL)-1
+          WRITE(0,115) ' GROUP ',ANAME(1:II)
+          IF(LU2.NE.0) WRITE(LU2,115) ' GROUP ',ANAME(1:II)
+        ELSE
+          CALL CROSSEXP(GERM%GERMPLASM_ID,1,NTCX,LU2)
+        ENDIF
+      ENDIF
+C
+C  SEARCH FOR ALL NAMES
+C
+      ANAME=' '
+      NAMDAT%GERMPLASM=GERM%GERMPLASM_ID
+      NAMDAT%TYPE=0
+      NAMDAT%STATUS=0
+      II=0
+      I4=GMS_getName(NAMDAT,ANAME,80,0)
+      DO WHILE (I4.EQ.1)
+      IF(II.EQ.0) THEN
+      WRITE(0,120)
+      IF(LU2.NE.0) WRITE(LU2,120)
+ 120  FORMAT(' NTYPE NID NLOCN NYEAR NUSER NSTAT NREF NAME VALUES:')
+      ENDIF
+      II=INDEX(ANAME,NULL)-1
+c 26   IF(NAMDAT%STATUS.NE.1.OR.
+c     &(NAMDAT%STATUS.EQ.1.AND.ANAME(1:II).NE.PNAME)) THEN
+ 26   CWK=FCODE(NAMDAT%TYPE)
+      WRITE(0,118) NAMDAT.TYPE,NAMDAT.NID,
+     &NAMDAT.LOCATION,NAMDAT.DATE/10000,NAMDAT.USER,
+     &NAMDAT.STATUS,NAMDAT.REFERENCE,ANAME(1:II)
+      IF(LU2.NE.0) WRITE(LU2,118) NAMDAT.TYPE,NAMDAT.NID,
+     &NAMDAT.LOCATION,NAMDAT.DATE/10000,NAMDAT.USER,
+     &NAMDAT.STATUS,NAMDAT.REFERENCE,ANAME(1:II)
+c      ENDIF
+ 118  FORMAT(I4,I9,2I5,3I4,1X,A)
+      ANAME=' '
+      NAMDAT%TYPE=0
+      NAMDAT%STATUS=0
+      I4=GMS_getName(NAMDAT,ANAME,80,1)
+      END DO
+C FIND CID-SID IF THERE IS ONE
+      CID=0
+      SID=0
+      I4=GMS_findCIDSID(CID,SID,GERM%GERMPLASM_ID,0)
+      IF(I4.EQ.1.AND.CID.NE.0) THEN
+      WRITE(0,132) CID,SID
+      IF(LU2.NE.0) WRITE(LU2,132) CID,SID
+      ENDIF
+ 132  FORMAT(' CIMMYT CID-SID =',I8,'-',I5)
+C
+      CWK=MCODE(GERM%METHOD)
+      WRITE(0,117) GERM%GERMPLASM_ID,GERM%NO_PROGENITORS,
+     &CWK(1:LEN_TRIM(CWK)),GERM%METHOD,GERM%PROGENITOR_ID1,
+     &GERM%PROGENITOR_ID2,GERM%MGID,GERM%USER,GERM%LOCAL_GID,GERM%DATE,
+     &GERM%LOCATION,GERM%REFERENCE,GERM%REPLACE
+      IF(LU2.NE.0) WRITE(LU2,117) GERM%GERMPLASM_ID,GERM%NO_PROGENITORS,
+     &CWK(1:LEN_TRIM(CWK)),GERM%METHOD,GERM%PROGENITOR_ID1,
+     &GERM%PROGENITOR_ID2,GERM%MGID,GERM%USER,GERM%LOCAL_GID,GERM%DATE,
+     &GERM%LOCATION,GERM%REFERENCE,GERM%REPLACE
+ 117  FORMAT(        ' GERMPLASM_ID  = ',I9,
+     &               ' NO_PROGENITORS =    ',I5,
+     &               ' METHOD = ',A,'(',I4,')'/
+     &               ' PROGENITOR_ID1 =',I9,
+     &               ' PROGENITOR_ID2 =',I9,
+     &               ' MANAGEMENT GRP =',I9/
+     &               ' GERMPLASM_USER = ',I5,
+     &               ' LOCAL_GERMPLASM =',I8,
+     &               ' GERMPLASM_DATE = ',I8/
+     &               ' LOCATION =       ',I5,
+     &               ' GERMPLASM_REFERENCE=',I5,
+     &               ' GERMPLASM_REPLACE = ',I5/
+     &               ' ATTRIBUTES:')
+      DO 2 I=3,GERM%NO_PROGENITORS
+      I4=GMS_getProgenitorID(GERM%GERMPLASM_ID,I,J)
+      WRITE(0,119) I,J
+      IF(LU2.NE.0) WRITE(LU2,119) I,J
+ 119  FORMAT(' PROGENITOR_ID',I3,'= ',I8)
+ 2    CONTINUE
+C
+C  SEARCH FOR ALL ATTRIBUTES
+C
+      ANAME=' '
+      ATTB%TYPE=0
+      ATTB%GERMPLASM=GERM%GERMPLASM_ID
+      I4=GMS_getAttribute(ATTB,ANAME,4095,0)
+      DO WHILE (I4.EQ.1)
+      II=INDEX(ANAME,NULL)-1
+ 28   CWK=FCODE(ATTB%TYPE)
+      WRITE(0,116) CWK(1:LEN_TRIM(CWK)),ATTB.REFERENCE,ANAME(1:II)
+      IF(LU2.NE.0) WRITE(LU2,116) CWK(1:LEN_TRIM(CWK)),ATTB.REFERENCE,
+     & ANAME(1:II)
+ 116  FORMAT(1X,A,T6,I4,1X,A)
+      ANAME=' '
+      ATTB%TYPE=0
+      I4=GMS_getAttribute(ATTB,ANAME,4095,1)
+      END DO
+C GERMPLASM CHANGES
+      CALL ZEROCHANGE(CHANGE)
+      CHANGE%crecord=GERM%GERMPLASM_ID
+      CHANGE%ctable='GERMPLSM'C
+      I4=GMS_findChanges(CHANGE,CWK,12,0)
+      DO WHILE (I4.EQ.1)
+      WRITE(0,129) CHANGE%cfield,CHANGE%cfrom,CHANGE%cto,CHANGE%crecord,
+     &CHANGE%cgroup,CHANGE%cuid
+      IF(LU2.NE.0) WRITE(LU2,129) CHANGE%cfield,CHANGE%cfrom,CHANGE%cto,
+     &CHANGE%crecord,CHANGE%cgroup,CHANGE%cuid
+129   FORMAT(' CHANGE ',A5,' FROM',I8' TO',I8,' IN',I8,' AT ',
+     &A14,' UID',I4)
+      I4=GMS_findChanges(CHANGE,CWK,12,1)
+      END DO
+C LOCATION
+      IF(GERM%LOCATION.NE.0) THEN
+      LOCN%LOCATION_ID=GERM%LOCATION
+      I4=GMS_getLocation(LOCN,0)
+      ANAME=LOCN%PREFERRED_NAME
+      IF(I4.EQ.1) THEN
+      II=INDEX(ANAME,NULL)-1
+      CWK=' '
+      IF(LOCN%COUNTRY.NE.0) CWK=CNTRY(LOCN%COUNTRY)
+      WRITE(0,122) LOCN%LOCATION_ID,ANAME(1:II),CWK
+      IF(LU2.NE.0) WRITE(LU2,122) LOCN%LOCATION_ID,ANAME(1:II),CWK
+      ENDIF
+ 122  FORMAT(' LOCN ',I5,1X,A,', ',A3)
+      ENDIF
+C  REFERENCE
+      IREF=GERM%REFERENCE
+      CALL ZEROBIBREFS(BREF)
+      BREF%REFID=IREF
+      I4=-1
+      IF(IREF.NE.0)I4=GMS_getBibrefs(BREF,0)
+      IF(I4.EQ.1) THEN 
+      WRITE(0,127) TRIM(CTOFSTR(BREF%AUTHORS)),BREF%PUBDATE,
+     &TRIM(CTOFSTR(BREF%ANALYT))
+      IF(LU2.NE.0) WRITE(LU2,127) TRIM(CTOFSTR(BREF%AUTHORS)),
+     &BREF%PUBDATE,TRIM(CTOFSTR(BREF%ANALYT))
+      ENDIF     
+ 127  FORMAT(1X,'REF: ',A,1X,I8/6X,A)
+C  NAME CHANGES
+      ANAME=' '
+      NAMDAT%GERMPLASM=GERM%GERMPLASM_ID
+      NAMDAT%TYPE=0
+      NAMDAT%STATUS=0
+      II=0
+      I4=GMS_getName(NAMDAT,ANAME,80,0)
+      DO WHILE (I4.EQ.1)
+      CALL ZEROCHANGE(CHANGE)
+      CHANGE%crecord=NAMDAT%NID
+      CHANGE%ctable='NAMES'C
+      I=GMS_findChanges(CHANGE,CWK,12,0)
+      DO WHILE (I.EQ.1)
+      WRITE(0,129) CHANGE%cfield,CHANGE%cfrom,CHANGE%cto,CHANGE%crecord,
+     &CHANGE%cgroup
+      IF(LU2.NE.0) WRITE(LU2,129) CHANGE%cfield,CHANGE%cfrom,CHANGE%cto,
+     &CHANGE%crecord,CHANGE%cgroup
+      I=GMS_findChanges(CHANGE,CWK,12,1)
+      END DO
+      ANAME=' '
+      NAMDAT%TYPE=0
+      NAMDAT%STATUS=0
+      I4=GMS_getName(NAMDAT,ANAME,80,1)
+      END DO
+C  LISTS
+c      CALL SEARCHLISTS(GERM%GERMPLASM_ID,LLST,NLSTS,IER)   
+      ANAME=GENCDE(GERM%GERMPLASM_ID)
+C      WRITE(0,130) GERM%GERMPLASM_ID,LSPS,NGEN,MAN,NBC,LDM,MCR
+C      IF(LU2.NE.0) WRITE(LU2,130) GERM%GERMPLASM_ID,LSPS,NGEN,MAN,NBC,LDM,MCR
+C 130  FORMAT(7I8)
+      WRITE(0,131) GERM%GERMPLASM_ID,TRIM(ANAME)
+      IF(LU2.NE.0) WRITE(LU2,131) GERM%GERMPLASM_ID,TRIM(ANAME)      
+ 131  FORMAT(' GENERATION CODE FOR GID',I9,' IS ',A)
+      WRITE(0,128)
+      WRITE(3,128)
+ 128  FORMAT(1X,70(1H-))
+      RETURN
+      END SUBROUTINE WRTGERM
+C******************************************************* GENCDE
+C  PURPOSE:
+C  RETURN THE GENERATION CODE OF GID IN STRING FORMAT
+C---- LAST UPDATE 16/03/04 ----------------------------- GENCDE
+      CHARACTER*20 FUNCTION GENCDE(IGID)
+      USE GMS_INTERFACE
+      CHARACTER*20 ANAME,CWK
+      GENCDE=' '
+      IF(IGID.EQ.0) RETURN
+      I4=GMS_computeGenerationNo(IGID,LSPS,NGEN,MAN,NBC,LDM,MCR)
+      ANAME='Ukn'
+      IF(MCR.NE.0.AND.MCR.NE.31) ANAME=TRIM(MCODE(MCR))
+      IF(NBC.GT.0) THEN
+      WRITE(CWK,'(I2)') NBC
+      ANAME=TRIM(MCODE(MCR))//CWK(2:2)
+      IF(NBC.GT.9) ANAME=TRIM(MCODE(MCR))//CWK(1:2)
+      ENDIF
+      WRITE(CWK,'(I2)') NGEN
+      IF(NGEN.EQ.0) CWK=' ?'
+      I=LEN_TRIM(ANAME)+1
+      ANAME(I:)='(F'//CWK(2:2)
+      IF(NGEN.GT.9) ANAME(I:)='(F'//CWK(1:2)
+      IF (LSPS.NE.0) THEN
+      WRITE(CWK,'(I2)') IABS(LSPS)
+      I=LEN_TRIM(ANAME)+1
+      ANAME(I:)=',S'//CWK(2:2)
+      IF(LSPS.GT.9) ANAME(I:)=',S'//CWK(1:2)
+      IF(LSPS.LT.0) ANAME(I:I+1)=',D'
+      ENDIF
+      IF (MAN.NE.0) THEN
+      WRITE(CWK,'(I2)') MAN
+      I=LEN_TRIM(ANAME)+1
+      ANAME(I:)=',M'//CWK(2:2)
+      IF(MAN.GT.9) ANAME(I:)=',M'//CWK(1:2)
+      ENDIF
+      I=LEN_TRIM(ANAME)+1
+      ANAME(I:)=')'
+      IF(LDM.GT.0) ANAME(I+1:)=MCODE(LDM)
+      GENCDE=ANAME
+      RETURN
+      END FUNCTION GENCDE
+C******************************************************* LSTNMS
+C  PURPOSE:
+C  RETURN A LIST OF NAMES FOR GERMPLASM IGID UP TO LN CHRS
+C---- LAST UPDATE 25/08/98 ----------------------------- LSTNMS
+      CHARACTER*256 FUNCTION LSTNMS(IGID,LN)
+      USE GMS_INTERFACE
+      INTEGER*4, INTENT(IN) :: IGID,LN
+      CHARACTER ANAME*256,NULL*1
+      DATA NULL/0/
+      IF(LN.GT.256) PAUSE 'LSTNMS LENGTH'
+      LSTNMS='<Unknown>'
+      IF(IGID.EQ.0) RETURN
+      ANAME=NULL
+      L=GMS_listNames(IGID,ANAME,256)
+      J=0
+ 1    J1=J
+      J=INDEX(ANAME,NULL)
+      IF(J.EQ.0) J=256
+      ANAME(J:J)=','
+      IF(J.GT.J1+1) GOTO 1
+      J=J-1
+      IF(J.GT.0) ANAME(J:)=' '
+      IF(J.LE.0.OR.J.GT.LN.OR.L.EQ.-7) ANAME(LN:)='> '
+      LSTNMS=ANAME
+      RETURN
+      END FUNCTION LSTNMS
+C******************************************************* IREL
+C  PURPOSE:
+C  RETURN GID OF IRRI RELEASED VARIETIES
+C---- LAST UPDATE 12/10/97 ----------------------------- IREL
+      INTEGER*4 FUNCTION IREL(NAME)
+      CHARACTER NAME*(*),IRELN(45)*9
+      INTEGER*4 IRELG(45)
+      DATA IRELG /
+     &   715,  902, 2298, 2444, 2722, 7845, 9756,10565,10583
+     &,11105,11848,12022,12138,12521,13064,13988,19541,19885
+     &,20640,23706,26216,26381,34778,40686,45975,45991,50533
+     &,55827,61654,61798,62159,63333,65432,67092,70125,73006
+     &,74406,76174,80032,80172,81489,82290,82290,83343,83343/
+      DATA IRELN /
+     & 'IR 8' ,'IR 5' ,'IR 20','IR 24','IR 22','IR 26','IR 34','IR 30',
+     &'IR 28','IR 36','IR 29','IR 40','IR 32','IR 38','IR 46','IR 42',
+     &'IR 43','IR 44','IR 45','IR 52','IR 54','IR 48','IR 50','IR 58',
+     &'IR 56','IR 60','IR 64','IR 65','IR 70','IR 74','IR 62','IR 68',
+     &'PSB RC 4','IR 66','IR 72','PSB RC 2','PSB RC 1','PSB RC 10',
+     &'RC 26 H','PSB RC 28','PSB RC 30','RC 18','PSB RC 18',
+     &'RC 20','PSB RC 20'/
+      DO 1 I=1,45
+      IF(NAME.EQ.IRELN(I)) GOTO 2
+ 1    CONTINUE
+      IREL=0
+      RETURN
+ 2    IREL=IRELG(I)
+      RETURN
+      END FUNCTION IREL
+C******************************************************* CROSSEXP
+C  PURPOSE:
+C  DISPLAY A PURDY CROSS EXPANSION
+C
+C  ARGUMENTS:
+C  GID  - GID TO EXPAND
+C  LEVEL- NUMBER OF GENERATIVE LEVELS TO EXPAND (IF NTYPE=0)
+C  NTYPE- EXPAND TO PROGENITORS WITH SPECIFIED NAME TYPE (ELSE 0)
+C  LU2  - ALTERNATE OUTPUT UNIT (ELSE ZERO)
+C
+C---- 01/08/99 ----------------------------------------- CROSSEXP
+      SUBROUTINE CROSSEXP(IGID,LEVEL,NTYPE,LU2)
+      USE GMS_INTERFACE
+      PARAMETER (MAXTREE=30000,MAXLIST=3000)
+      CHARACTER CROSS*10000,NULL*1
+      INTEGER*4 LIST(100)
+      COMMON /WRK/ NLST,MXLST,LLST(MAXLIST),CROSS
+      DATA NULL /0/
+      CROSS=NULL
+      LVL=LEVEL
+      IF(NTYPE.NE.0) LVL=5
+      I4=GMS_crossExpansion(IGID,LVL,NTYPE,CROSS,4096,LIST,100)
+      IF(I4.NE.1) THEN
+      I4=MAX(INDEX(CROSS,NULL)-1,1)
+      WRITE(0,101) LEVEL,CROSS(1:I4)
+      IF(LU2.NE.0) WRITE(LU2,101) LEVEL,CROSS(1:I4)
+101   FORMAT(' ** ERROR FROM CROSS EXPANSION ** LEVEL',I3/1X,A)
+      RETURN
+      ENDIF
+      I4=INDEX(CROSS,NULL)-1
+      IF(I4.LT.1) RETURN
+      WRITE(0,100) CROSS(1:I4)
+      IF(LU2.NE.0) WRITE(LU2,100) CROSS(1:I4)
+ 100  FORMAT(' CROSS: ',A)
+      RETURN
+      END SUBROUTINE CROSSEXP
+C******************************************************* CNTRY
+C  PURPOSE:
+C  DISPLAY A COUNTRY CODE
+C
+C------------------------------------------------------- CNTRY
+      CHARACTER*4 FUNCTION CNTRY(LOCID)
+      USE GMS_STRUCTURES
+      USE GMS_INTERFACE
+      CHARACTER LCNM(400)*3,UDFCD(600)*8,MCD(200)*8,NULL*1
+      INTEGER*4 LCN(400),UDFNO(600),MIDS(200)
+      TYPE(GMS_LOCATION) LOCN
+      COMMON /CODES/ NUDF,UDFNO,UDFCD,NCNTRY,LCN,LCNM,NMTHD,MIDS,MCD
+      DATA NULL/0/
+      IF(NCNTRY.EQ.0) THEN
+C
+C  GET COUNTRY CODES
+C
+      LOCN%TYPE=405
+      DO 5 I=1,2
+      LOCN%LOCATION_ID=0
+      LOCN%NLLP=0
+      LOCN%PREFERRED_NAME=NULL
+      LOCN%ABBREVIATION=NULL
+      LOCN%SUBNAT_LEVEL3=0
+      LOCN%SUBNAT_LEVEL2=0
+      LOCN%SUBNAT_LEVEL1=0
+      LOCN%COUNTRY=0
+      LOCN%REPLACE=0
+      I4=GMS_getLocation2(LOCN,0)
+      DO WHILE (I4.EQ.1)
+      NCNTRY=NCNTRY+1
+      IF(NCNTRY.GT.400) STOP 'TOO MANY COUNTRIES'
+      LCN(NCNTRY)=LOCN%LOCATION_ID
+      LCNM(NCNTRY)=LOCN%ABBREVIATION
+      I4=GMS_getLocation2(LOCN,1)
+      END DO
+      LOCN%TYPE=411
+ 5    CONTINUE
+C
+      ENDIF
+      CNTRY='  ? '
+      IF(LOCID.EQ.0) RETURN
+      DO 1 I=1,NCNTRY
+      IF(LOCID.EQ.LCN(I)) GOTO 2
+ 1    CONTINUE
+      LOCN%LOCATION_ID=LOCID
+      I4=GMS_getLocation(LOCN,0)
+      IF(I4.NE.1.OR.LOCN%COUNTRY.LE.0) RETURN
+      DO 3 I=1,NCNTRY
+      IF(LOCN%COUNTRY.EQ.LCN(I)) GOTO 4
+ 3    CONTINUE
+      RETURN
+ 2    CNTRY=LCNM(I)
+      RETURN
+ 4    CNTRY=LCNM(I)//'<'
+      RETURN
+      END FUNCTION CNTRY
+C******************************************************* FCODE
+C  PURPOSE:
+C  DISPLAY A USER DEFINED FIELD CODE
+C
+C------------------------------------------------------- FCODE
+      CHARACTER*8 FUNCTION FCODE(ID)
+      USE GMS_STRUCTURES
+      USE GMS_INTERFACE
+      CHARACTER LCNM(400)*3,UDFCD(600)*8,MCD(200)*8,ANAME*80,NULL*1
+      INTEGER*4 LCN(400),UDFNO(600),MIDS(200)
+      TYPE(GMS_UDFIELD) UDFLD
+      COMMON /CODES/ NUDF,UDFNO,UDFCD,NCNTRY,LCN,LCNM,NMTHD,MIDS,MCD
+      DATA NULL/0/
+      IF(NUDF.EQ.0) THEN
+C
+C  GET USER DEFINED FIELD DEFINITIONS
+C
+      UDFLD%UDFIELD_ID=0
+      I4=GMS_getUDField(UDFLD,ANAME,80,0)
+      DO WHILE (I4.EQ.1)
+      NUDF=NUDF+1
+      IF(NUDF.GT.600) STOP 'Too Many User Defined Fields (NUDF)'
+      UDFNO(NUDF)=UDFLD%UDFIELD_ID
+      UDFCD(NUDF)=UDFLD%CODE(1:INDEX(UDFLD%CODE,NULL)-1)
+      I4=GMS_getUDField(UDFLD,ANAME,80,1)
+      END DO
+      ENDIF
+C
+      FCODE='?'
+      DO 1 I=1,NUDF
+      IF(ID.EQ.UDFNO(I)) GOTO 2
+ 1    CONTINUE
+      RETURN
+ 2    FCODE=UDFCD(I)
+      RETURN
+      END FUNCTION FCODE
+C******************************************************* MCODE
+C  PURPOSE:
+C  DISPLAY A METHOD CODE
+C
+C------------------------------------------------------- MCODE
+      CHARACTER*8 FUNCTION MCODE(MID)
+      USE GMS_STRUCTURES
+      USE GMS_INTERFACE
+      CHARACTER LCNM(400)*3,UDFCD(600)*8,MCD(200)*8,ANAME*80,NULL*1
+      INTEGER*4 LCN(400),UDFNO(600),MIDS(200)
+      TYPE(GMS_METHOD) METH
+      COMMON /CODES/ NUDF,UDFNO,UDFCD,NCNTRY,LCN,LCNM,NMTHD,MIDS,MCD
+      DATA NULL/0/
+      IF(NMTHD.EQ.0) THEN
+C
+C  GET METHOD CODES
+C
+      METH%METHOD_ID=0
+      I4=GMS_getMethod(METH,ANAME,80,0)
+      DO WHILE(I4.EQ.1)
+      NMTHD=NMTHD+1
+      IF(NMTHD.GT.200) STOP 'Too many METHODS'
+      MIDS(NMTHD)=METH%METHOD_ID
+      MCD(NMTHD)=METH%CODE(1:INDEX(METH%CODE,NULL)-1)
+      I4=GMS_getMethod(METH,ANAME,80,1)
+      ENDDO
+      ENDIF
+C
+      MCODE='?'
+      DO 1 I=1,NMTHD
+      IF(MID.EQ.MIDS(I)) GOTO 2
+ 1    CONTINUE
+      RETURN
+ 2    MCODE=MCD(I)
+      RETURN
+      END FUNCTION MCODE
+C******************************************************* DRWTREE
+C  PURPOSE:
+C  DISPLAY A GENEALOGICAL TREE
+C
+C  ARGUMENTS:
+C  IGID - GID OF GERMPLASM TO BE EXPANDED
+C  LEVEL- LEVEL TO EXPAND
+C  LSTFL- LU FOR SECONDARY LISTING (ZERO FOR NONE)
+C------------------------------------------------------- DRWTREE
+      SUBROUTINE DRWTREE(IGID,LEVEL,LSTFL)
+      USE GMS_INTERFACE
+      PARAMETER (MAXTREE=30000,MAXLIST=3000)
+      CHARACTER TREE*8800,NULL*1,CTMP*80,CWK*80
+      COMMON /WRK/ NLST,MXLST,LLST(MAXLIST),TREE
+      DATA NULL /0/
+      I4=GMS_generateTree(IGID,LEVEL,TREE,8192,LLST,1224)
+      L=1
+      K=1
+      CTMP=' '
+      DO WHILE (TREE(L:L).NE.NULL)
+      M=INDEX(TREE(L:),NULL)+L-2
+      CWK=TREE(L:M)
+      I=INDEX(CWK,' > ')
+      IF(I.EQ.0.OR.INDEX(CTMP,CWK(I+3:M-L+1)).EQ.0) THEN
+      WRITE(0,100) K,TREE(L:M),LLST(K)
+ 100  FORMAT(I3,1X,A,T70,I8)
+      IF(LSTFL.NE.0) WRITE(LSTFL,100) K,TREE(L:M),LLST(K)
+      ENDIF
+      CTMP=TREE(L:M)
+      K=K+1
+      L=M+2
+      END DO
+      NLST=K-1
+      IF(I4.NE.1) THEN
+      WRITE(0,101) I4,NLST,M
+      IF(LSTFL.NE.0) WRITE(LSTFL,101) I4,NLST,M
+ 101  FORMAT(' *** WARNING *** TREE NOT COMPLETE, IER=',3I5)
+      ENDIF
+      RETURN
+      END SUBROUTINE DRWTREE
+C******************************************************* SEARCHLISTS
+C  PURPOSE:
+C  SEARCH ALL LISTS FOR ENTRIES WITH GIVIN GID
+C
+C  ARGUMENTS:
+C  IGID - GID TO BE FOUND IN GERMPLASM LISTS
+C  IER  - ERROR RETURN 0 FOR SUCESS
+C---- LAST UPDATE 19/10/07 ----------------------------- SEARCHLISTS      
+      SUBROUTINE SEARCHLISTS(IGID,LSTGID,NLSTS,IER)
+      USE GMS_STRUCTURES
+      USE GMS_INTERFACE
+      PARAMETER (MAXTREE=30000,MAXLIST=3000)
+      INTEGER I4,IER,NLSTS,LSTGID(MAXLIST,2)
+C  NOTE DIMENSION OF LSTGID SHOULD MATCH DIMENSIONS OF LSTGID, LLST AND DEPNDS       
+      TYPE(GMS_LISTNAME) LSTNM
+      TYPE(GMS_LISTDATA) LDATA
+      CHARACTER NULL*1
+      DATA NULL /0/
+      CALL ZEROLSTDAT(LDATA)
+      LDATA%GID=IGID
+      IER=1
+      NLSTS=0
+      I4=GMS_findListData(LDATA,0)
+      DO WHILE (I4.EQ.1)
+      IF(IER.EQ.1) THEN
+      WRITE(0,101) IGID
+      WRITE(3,101) IGID
+ 101  FORMAT(/' GERMPLASM WITH GID=',I9,
+     &' OCCURS IN THE FOLLOWING LISTS:'/
+     &' LIST NAME        LISTID ENTRYID NRECID ENTRYCODE')      
+      ENDIF
+      IER=0
+      CALL ZEROLSTNM(LSTNM)
+      LSTNM%LISTID=LDATA%LISTID
+      I1=GMS_getListName(LSTNM,0)
+      IF(I1.NE.1) THEN
+      WRITE(0,103) LDATA%LISTID
+ 103  FORMAT('** WARNING ** LIST',I9,' HAS A NAME ERROR')
+      LSTNM%LISTNAME='<UNKNOWN>'//NULL     
+      ENDIF
+      WRITE(0,100) ADJUSTL(CTOFSTR(LSTNM%LISTNAME)),LDATA%LISTID,
+     & LDATA%ENTRYID,LDATA%LRECID,TRIM(CTOFSTR(LDATA%ENTRYCD))
+      WRITE(3,100) ADJUSTL(CTOFSTR(LSTNM%LISTNAME)),LDATA%LISTID,
+     & LDATA%ENTRYID,LDATA%LRECID,TRIM(CTOFSTR(LDATA%ENTRYCD))
+ 100  FORMAT(1X,A15,I9,2I7,1X,A)
+      NLSTS=NLSTS+1
+      IF(NLSTS.GT.2000) THEN
+      WRITE(0,102) IGID,NLSTS-1
+ 102  FORMAT('** WARNING ** GID',I9,' OCCURS IN MORE THAN',I5,' LISTS '/
+     &' PRESS RETURN TO IGNORE REMAINING LISTS AND CONTINUE')     
+      RETURN
+      ENDIF
+      LSTGID(NLSTS,1)=LDATA%LISTID
+      LSTGID(NLSTS,2)=LDATA%LRECID
+      I4=GMS_findListData(LDATA,1)
+      ENDDO
+      IER=0
+      RETURN
+      END SUBROUTINE SEARCHLISTS                       
+C******************************************************* ZEROGERM
+C  PURPOSE:
+C  SET ALL ELEMENTS OF GERM TO ZERO
+C---- LAST UPDATE 17/03/00 ----------------------------- ZEROGERM
+      SUBROUTINE ZEROGERM(GERM)
+      USE GMS_STRUCTURES
+      TYPE (GMS_GERMPLASM) GERM
+      GERM%GERMPLASM_ID=0
+      GERM%METHOD=0
+      GERM%NO_PROGENITORS=0
+      GERM%PROGENITOR_ID1=0
+      GERM%PROGENITOR_ID2=0
+      GERM%USER=0
+      GERM%LOCAL_GID=0
+      GERM%LOCATION=0
+      GERM%DATE=0
+      GERM%REFERENCE=0
+      GERM%REPLACE=0
+	GERM%MGID=0
+      RETURN
+      END SUBROUTINE ZEROGERM
+C******************************************************* ZEROCHANGE
+C  PURPOSE:
+C  SET ALL ELEMENTS OF CHANGE STRUCTURE TO ZERO
+C---- LAST UPDATE 17/03/00 ----------------------------- ZEROCHANGE
+      SUBROUTINE ZEROCHANGE(CHANGE)
+      USE GMS_STRUCTURES
+      TYPE (GMS_CHANGES) CHANGE
+      CHARACTER NULL*1
+      DATA NULL/0/
+      CHANGE%cid=0
+      CHANGE%crecord=0
+      CHANGE%cfrom=0
+      CHANGE%cto=0
+      CHANGE%cdate=0
+      CHANGE%ctime=0
+      CHANGE%cuid=0
+      CHANGE%cref=0
+      CHANGE%ctable=NULL
+      CHANGE%cfield=NULL
+      CHANGE%cgroup=NULL
+      RETURN
+      END SUBROUTINE ZEROCHANGE
+C******************************************************* ZERONAMDAT
+C  PURPOSE:
+C  SET ALL ELEMENTS OF NAMDAT TO ZERO
+C---- LAST UPDATE 17/08/00 ----------------------------- ZERONAMDAT
+      SUBROUTINE ZERONAMDAT(NAMDAT)
+      USE GMS_STRUCTURES
+      TYPE (GMS_NAMEDATA) NAMDAT
+      NAMDAT%GERMPLASM=0
+      NAMDAT%TYPE=0
+      NAMDAT%STATUS=0
+      NAMDAT%USER=0
+      NAMDAT%LOCATION=0
+      NAMDAT%DATE=0
+      NAMDAT%REFERENCE=0
+      RETURN
+      END SUBROUTINE ZERONAMDAT
+C******************************************************* ZEROBIBREFS
+C  PURPOSE:
+C  SET ALL ELEMENTS OF BIBREFS TO ZERO
+C---- LAST UPDATE 17/08/00 ----------------------------- ZEROBIBREFS
+      SUBROUTINE ZEROBIBREFS(BREF)
+      USE GMS_STRUCTURES
+      TYPE (GMS_BIBREFS) BREF
+      BREF%REFID=0
+      BREF%PUBTYPE=0
+      BREF%PUBDATE=0
+      BREF%AUTHORS=' '
+      BREF%EDITORS=' '
+      BREF%ANALYT=' '
+      BREF%MONOG=' '
+      BREF%SERIES=' '
+      BREF%VOLUME=' '
+      BREF%ISSUE=' '
+      BREF%PAGECOL=' '
+      BREF%PUBLISH=' '
+      BREF%PUBCITY=' '
+      BREF%PUBCNTRY=' '
+      RETURN
+      END SUBROUTINE ZEROBIBREFS
+C******************************************************* ZEROLSTNM
+C  PURPOSE:
+C  SET ALL ELEMENTS OF LSTNM TO ZERO
+C---- LAST UPDATE 17/08/00 ----------------------------- ZEROLSTNM
+      SUBROUTINE ZEROLSTNM(LSTNM)
+      USE GMS_STRUCTURES
+      TYPE (GMS_LISTNAME) LSTNM
+      LSTNM%LISTID=0
+      LSTNM%LISTNAME=' '
+      LSTNM%LISTDATE=0
+      LSTNM%LISTTYPE=' '
+      LSTNM%LISTUID=0
+      LSTNM%LISTDESC=' '
+      LSTNM%LISTSTATUS=0
+      LSTNM%LISTHIER=0
+      RETURN
+      END SUBROUTINE ZEROLSTNM
+C******************************************************* ZEROLSTDAT
+C  PURPOSE:
+C  SET ALL ELEMENTS OF LSTDATA TO ZERO
+C---- LAST UPDATE 19/10/07 ----------------------------- ZEROLSTDAT
+      SUBROUTINE ZEROLSTDAT(LSTDATA)
+      USE GMS_STRUCTURES
+      TYPE (GMS_LISTDATA) LSTDATA
+      LSTDATA%LISTID=0
+      LSTDATA%GID=0
+      LSTDATA%LRECID=0
+      LSTDATA%ENTRYCD=' '
+      LSTDATA%SOURCE=' '
+      LSTDATA%DESIG=' '
+      LSTDATA%GRPNAME=' '
+      LSTDATA%ENTRYID=0      
+      RETURN
+      END SUBROUTINE ZEROLSTDAT
+      END MODULE GMS_TOOLS
+C******************************************************* GMS_FUNCTIONS
+C  PURPOSE:
+C  COMMONLY USED BASIC GMS FUNCTIONS
+C---- LAST UPDATE 08/02/97 ----------------------------- GMS_FUNCTIONS
+      MODULE GMS_FUNCTIONS
+      CONTAINS
+      LOGICAL FUNCTION COMPARE_GERMPLASM(G1,G2)
+      USE GMS_STRUCTURES
+      TYPE(GMS_GERMPLASM), INTENT(IN) :: G1,G2
+      COMPARE_GERMPLASM=.FALSE.
+      IF(G1%GERMPLASM_ID.NE.G2%GERMPLASM_ID) RETURN
+      IF(G1%METHOD.NE.G2%METHOD) RETURN
+      IF(G1%NO_PROGENITORS.NE.G2%NO_PROGENITORS) RETURN
+      IF(G1%PROGENITOR_ID1.NE.G2%PROGENITOR_ID1) RETURN
+      IF(G1%PROGENITOR_ID2.NE.G2%PROGENITOR_ID2) RETURN
+      IF(G1%USER.NE.G2%USER) RETURN
+      IF(G1%LOCAL_GID.NE.G2%LOCAL_GID) RETURN
+      IF(G1%LOCATION.NE.G2%LOCATION) RETURN
+      IF(G1%DATE.NE.G2%DATE) RETURN
+      IF(G1%REFERENCE.NE.G2%REFERENCE) RETURN
+      IF(G1%REPLACE.NE.G2%REPLACE) RETURN
+      COMPARE_GERMPLASM=.TRUE.
+      RETURN
+      END FUNCTION COMPARE_GERMPLASM
+C******************************************************* GROUPID
+C  PURPOSE:
+C  GET THE GROUP ID FOR GERMPLASM GERM
+C---- LAST UPDATE 22/10/98 ----------------------------- GROUPID
+      INTEGER*4 FUNCTION GROUPID(GERM)
+      USE GMS_STRUCTURES
+      TYPE(GMS_GERMPLASM) GERM
+      GROUPID=GERM%GERMPLASM_ID
+      IF(GERM%NO_PROGENITORS.GE.0) RETURN
+      IF(GERM%PROGENITOR_ID1.EQ.0.AND.GERM%PROGENITOR_ID2.EQ.0) RETURN
+      GROUPID=GERM%PROGENITOR_ID1
+      RETURN
+      END FUNCTION GROUPID
+C******************************************************* NDSTEPS
+C  PURPOSE:
+C  COUNT NUMBER OF DERIVATIVE STEPS FOR GERMPLASM GERM
+C  RETURN -1 IF UNKNOWN
+C---- LAST UPDATE 31/08/99 ----------------------------- NDSTEPS
+      INTEGER*4 FUNCTION NDSTEPS(GERM)
+      USE GMS_STRUCTURES
+      USE GMS_INTERFACE
+      TYPE(GMS_GERMPLASM) GERM,GERM1
+      NDSTEPS=0
+      IF(GERM%NO_PROGENITORS.GT.0) RETURN
+      GERM1=GERM
+ 6    NDSTEPS=NDSTEPS+1
+      MPR=GERM1%PROGENITOR_ID2
+      IF(MPR.EQ.0) THEN
+      NDSTEPS=-1
+      RETURN
+      ENDIF
+      IF(MPR.EQ.GERM1%PROGENITOR_ID1) RETURN
+      K=GMS_getGermplasm(MPR,GERM1)
+      IF(NDSTEPS.GE.100) THEN
+      WRITE(0,101) MPR
+ 101  FORMAT(' *** ERROR *** SUSPECTED CIRCULARITY AT GID',I9)
+      RETURN
+      ENDIF
+      IF(GERM1%PROGENITOR_ID1.NE.GERM%PROGENITOR_ID1) THEN
+      WRITE(0,102) GERM1%GERMPLASM_ID
+ 102  FORMAT(' *** ERROR *** DERIVATIVE CHANGES GROUP AT GID',I9)
+      RETURN
+      ENDIF
+      GOTO 6
+      END FUNCTION NDSTEPS
+C******************************************************* ADDGERM
+C  PURPOSE:
+C  ADD GERMPLASM RECORD
+C
+C  ARGUMENTS:
+C  METHOD - GERMPLASM GENESIS METHOD (LINKS TO METHODS TABLE)
+C  NPGRS  - NUMBER OF PROGENITORS (-1 FOR DERIVATIVE METHODS)
+C  IGID1  - GID FOR FIRST PROGENITOR OR GROUP GID FOR DERIVATIVES
+C  IGID2  - GID OF SECOND PROGENITOR OR SOURCE GID FOR DERIVATIVES
+C  LGID   - RECORD NUMBER FROM A DOWNLOAD DATABASE OR ZERO
+C  LOCN   - LOCATION ID LINKS TO LOCATION TABLE
+C  DATE   - GERMPLASM GESESIS DATE 'YYY-MM-DD', NULL ID NOT KNOWN
+C  NGREF  - GERMPLASM REFERENCE, LINKS TO REFERENCE ID ON BREF TABLE
+C  NTYPE  - NAME TYPE, LINKS TO UDFLD ID ON THE UDFLDS TABLE
+C  NLOC   - LOCATION ID FOR THE NAME
+C  NDATE  - NAME DATE (AS FOR DATE)
+C  NREF   - NAME REFERENCE LINKS TO REFERENCE ID ON BREF TABLE
+C  DESIG  - GERMPLASM NAME (LESS THAN 256 CHRS)
+C  GERM   - GMS_GERMPLASM STRUCTURE
+C           RETURNS WITH GERMPLASM DATA FOR THE ADDED GERMPLASM
+C  IWK    - INGEGER ARRAY OF GIDS FOR PROGENITOR 3,4...NPGRS FOR
+C           MULTI-PARENTAL GENERATIVE METHODS
+C  IER    - RETURN VALUE: 1 FOR SUCESS, NEGATIVE FOR FAILURE
+C---- 04/05/97 ----------------------------------------- ADDGERM
+      SUBROUTINE ADDGERM(METHOD,NPGRS,IGID1,IGID2,LGID,LOCN,DATE,NGREF,
+     & NTYPE,NLOC,NDATE,NREF,DESIG,GERM,IWK,IER)
+      USE GMS_STRUCTURES
+      USE GMS_INTERFACE
+      USE GMS_TOOLS      
+      TYPE(GMS_GERMPLASM) GERM
+      TYPE(GMS_NAMEDATA) NAMDAT
+      CHARACTER DESIG*(*),AVAL*256,NULL*1
+      INTEGER*4 DATE,IWK(20),NODATE,NDATE
+      DATA NULL /0/,NODATE/0/
+      IER=-1
+	CALL ZEROGERM(GERM)
+      GERM%METHOD=METHOD
+      GERM%NO_PROGENITORS=NPGRS
+      GERM%PROGENITOR_ID1=IGID1
+      GERM%PROGENITOR_ID2=IGID2
+      GERM%LOCAL_GID=LGID
+      GERM%LOCATION=LOCN
+      GERM%DATE=DATE
+      GERM%REFERENCE=NGREF
+C
+      NAMDAT%GERMPLASM=0
+      NAMDAT%STATUS=1
+      NAMDAT%USER=0
+      NAMDAT%TYPE=NTYPE
+      NAMDAT%LOCATION=NLOC
+      NAMDAT%DATE=NDATE
+      NAMDAT%REFERENCE=NREF
+      I4=LEN_TRIM(DESIG)
+      IF(I4.GT.255) RETURN
+      AVAL=DESIG(1:I4)//NULL
+      IER=GMS_addGermplasm(GERM,NAMDAT,AVAL,IWK)
+      IF(IER.NE.1) PAUSE 'ADDGERM'
+      RETURN
+      END SUBROUTINE ADDGERM
+C******************************************************* ADDNAME
+C  PURPOSE:
+C  ADD A NAME RECORD
+C
+C  ARGUMENTS:
+C  IGID   - GID FOR WHICH THE NAME WILL BE ADDED
+C  NTYPE  - NAME TYPE, LINKS TO UDFLD ID ON THE UDFLDS TABLE
+C  NLOC   - LOCATION ID FOR THE NAME
+C  NDATE  - NAME DATE, 'YYY-MM-DD' OR NULL IF UNKNOWN
+C  NREF   - NAME REFERENCE LINKS TO REFERENCE ID ON BREF TABLE
+C  DESIG  - GERMPLASM NAME (LESS THAN 256 CHRS)
+C  IER    - RETURN VALUE: 1 FOR SUCESS, NEGATIVE FOR FAILURE
+C---- 09/05/97 ----------------------------------------- ADDNAME
+      SUBROUTINE ADDNAME(IGID,NTYPE,NLOC,NDATE,NREF,DESIG,IER)
+      USE GMS_STRUCTURES
+      USE GMS_INTERFACE
+      TYPE(GMS_NAMEDATA) NAMDAT
+      CHARACTER DESIG*(*),AVAL*256,NULL*1
+      INTEGER*4 NODATE,NDATE
+      DATA NULL /0/, NODATE /0/
+      IER=-1
+      IF(IGID.EQ.0) RETURN
+      NAMDAT%GERMPLASM=IGID
+      NAMDAT%TYPE=NTYPE
+      NAMDAT%STATUS=0
+      NAMDAT%USER=0
+      NAMDAT%LOCATION=NLOC
+      NAMDAT%DATE=NDATE
+      NAMDAT%REFERENCE=NREF
+      J=LEN_TRIM(DESIG)
+      IF(J.GT.255) RETURN
+      AVAL=DESIG(1:J)//NULL
+      WRITE(0,*) 'ADDING NAME ',TRIM(AVAL)
+      IER=GMS_addName(NAMDAT,AVAL)
+      IF(IER.NE.1) PAUSE 'ADDNAME'
+      RETURN
+      END SUBROUTINE ADDNAME
+C******************************************************* ADDATT
+C  PURPOSE:
+C  ADD AN ATTRIBUTE RECORD
+C
+C  ARGUMENTS:
+C  IGID   - GID FOR WHICH THE ATTRIBUTE WILL BE ADDED
+C  ATYPE  - ATTRIBUTE TYPE, LINKS TO UDFLD ID ON THE UDFLDS TABLE
+C  ALOC   - LOCATION ID FOR THE ATTRIBUTE
+C  ADATE  - ATTRIBUTE DATE, 'YYY-MM-DD' OR NULL IF UNKNOWN
+C  AREF   - ATTRIBUTE REFERENCE LINKS TO REFERENCE ID ON BREF TABLE
+C  AVAL   - ATTRIBUTE VALUE (LESS THAN 512 CHRS)
+C  IER    - RETURN VALUE: 1 FOR SUCESS, NEGATIVE FOR FAILURE
+C---- 09/05/97 ----------------------------------------- ADDATT
+      SUBROUTINE ADDATT(IGID,ATYPE,ALOC,ADATE,AREF,AVAL,IER)
+      USE GMS_STRUCTURES
+      USE GMS_INTERFACE
+      TYPE(GMS_ATTRIBUTE) ATTB
+      CHARACTER AVAL*(*),NULL*1
+      INTEGER*4 ADATE,ATYPE,ALOC,AREF,NODATE
+      DATA NULL /0/,NODATE/0/
+      IER=-1
+      IF(IGID.EQ.0) RETURN
+      ATTB%GERMPLASM=IGID
+      ATTB%TYPE=ATYPE
+      ATTB%USER=0
+      ATTB%LOCATION=ALOC
+      ATTB%DATE=ADATE
+      ATTB%REFERENCE=AREF
+      J=LEN_TRIM(AVAL)
+C      IF(J.GT.511) RETURN
+C      ATVAL=AVAL(1:J)//NULL
+      IER=GMS_addAttribute(ATTB,AVAL(1:J)//NULL)
+      IF(IER.NE.1) PAUSE 'ADDATT'
+      RETURN
+      END SUBROUTINE ADDATT
+C******************************************************* PARSEPM
+C  PURPOSE:
+C  TO EXPAND A CROSS FROM GMS
+C
+C  ARGUMENTS:
+C  IGID - CROSS NUMBER TO EXPAND
+C------------------------------------------------------- PARSEPM
+      SUBROUTINE PARSEPM(LEVEL,IGID,NCR,PNAMES,PNMBRS)
+      USE GMS_STRUCTURES
+      USE GMS_INTERFACE
+      TYPE(GMS_GERMPLASM) GERM,GERM1
+      TYPE(GMS_NAMEDATA) NAME
+      CHARACTER PNAMES(20,2)*60,PNAME*60,NULL*1
+      INTEGER*4 PNMBRS(20,3),FPR,MPR,IG
+      DATA NULL /0/
+      LEV=LEVEL+3
+      IF(LEVEL.LT.1.OR.LEVEL.GT.16) LEV=19
+      NLF=1
+      NLM=1
+      NCR=1
+      PNAMES(1,2)=' '
+      PNMBRS(1,1)=2
+      PNMBRS(1,2)=0
+      PNMBRS(1,3)=0
+      IG=IGID
+ 1    K=GMS_getGermplasm2(IG,GERM,NAME,PNAME,60)
+      IF(NCR.EQ.1) THEN
+      PNAMES(1,1)=PNAME(1:INDEX(PNAME,NULL)-1)
+      K=GERM%PROGENITOR_ID2
+      IF(GERM%NO_PROGENITORS.EQ.-1.AND.K.NE.0) THEN
+      K=GMS_getGermplasm2(K,GERM1,NAME,PNAME,60)
+      PNAMES(1,2)='>'//PNAME(1:INDEX(PNAME,NULL)-1)
+      ENDIF
+      ENDIF
+      PNMBRS(NCR+1,1)=0
+      FPR=GERM%PROGENITOR_ID1
+      IF(FPR.NE.0) THEN
+      IF(GERM%NO_PROGENITORS.EQ.-1) THEN
+      K=GMS_getGermplasm2(FPR,GERM,NAME,PNAME,60)
+      FPR=GERM%PROGENITOR_ID1
+      ENDIF
+      IF(NCR.EQ.LEV) GOTO 6
+      NCR=NCR+1
+      MPR=GERM%PROGENITOR_ID2
+      PNMBRS(NCR,1)=FPR
+      PNMBRS(NCR,3)=GERM%METHOD
+      K=GMS_GETGERMPLASM2(FPR,GERM,NAME,PNAME,60)
+      PNAMES(NCR,1)=PNAME(1:INDEX(PNAME,NULL)-1)
+      K=GMS_GETGERMPLASM2(MPR,GERM,NAME,PNAME,60)
+      PNAMES(NCR,2)=PNAME(1:INDEX(PNAME,NULL)-1)
+      PNMBRS(NCR,2)=MPR
+      ENDIF
+      IF(NLM.LT.NLF) THEN
+      NLM=NLM+1
+      PNMBRS(NLM,1)=0
+      IF(FPR.NE.0) PNMBRS(NLM,1)=NCR
+      IG=PNMBRS(NLM,2)
+      IF(IG.NE.0) GOTO 1
+      ENDIF
+      PNMBRS(NLF,2)=0
+      IF(FPR.NE.0) PNMBRS(NLF,2)=NCR
+      NLF=NLF+1
+      IG=PNMBRS(NLF,1)
+      IF(IG.NE.0) GOTO 1
+C  CROSS EXPANSION COMPLETE - LIST CROSSES
+ 7    DO 5 I=1,MIN(NCR,LEVEL)
+      WRITE(0,100) I,PNAMES(I,1),PNMBRS(I,1),PNAMES(I,2),PNMBRS(I,2),
+     &PNMBRS(I,3)
+ 100  FORMAT(I3,1X,A30,I3,1X,A30,2I3)
+ 5    CONTINUE
+      RETURN
+ 6    WRITE(0,*) '*** WARNING *** MAX CROSS LEVELS REACHED'
+      GOTO 7
+      END SUBROUTINE PARSEPM
+
+C******************************************************* PARSECE
+C  PURPOSE:
+C  PARSE A PURDY CROSS HISTORY INTO A CROSS EXPANSION TREE
+C
+C  A CROSS EXPANSION TREE STRUCTURE HAS ONE HEADER ROW AND THEN
+C  ONE ROW FOR EACH CROSS IN THE PURDEY STRING
+C
+C  EACH ROW HAS ELEMENTS:
+C  PNAMES(I,1), PNAMES(I,2) PNMBRS(I,1), PNMBRS(I,2), PNMBRS(I,3)
+C
+C  IN THE HEADER ROW THES ELEMENTS CONTAIN:
+C  PMANES(1,1)=THE INPUT PURDEY STRING, PNAMES(1,2)=''
+C  PNMBRS(1,1)=2, PNMBRS(1,2)=PNMBRS(1,3)=0
+C
+C  IN EACH SUBSEQUENT ROW THE ELEMENTS CONTAIN:
+C  PNAMES(I,1) - THE NAME OR PURDEY STRING OF THE FEMALE PARENT
+C  PNAMES(I,2) - THE NAME OR PURDEY STRING OF THE MALE PARENT
+C  PNMBRS(I,1) - THE ROW NUMBER IN THE TREE CONTAINING THE
+C                SPLIT OF THE FEMALE PARENT OR ZERO IF IT
+C                CANNOT BE SPLIT
+C  PNMBRS(I,2) - THE ROW NUMBER OF THE SPLIT OF THE MALE PARENT
+C                IF IT CAN BE SPLIT, ELSE ZERO
+C  PNMBRS(I,3) - THE METHOD NUMBER FOR THE CURRENT CROSS
+C
+C  CROSSES ARE EXPANDED IN ORDER. THAT IS AT ROW I, THE FEMALE
+C  PARENT IS SPLIT ONE LEVEL IN ROW I+1 IF IT CAN BE EXPANDED
+C  AND THE MALE IN ROW I+2. IF THE FEMALE CANNOT BE EXPANDED THEN
+C  THE MALE IS SPLIT IN ROW I+1. THE TREE TERMINATES WHEN NEITHER
+C  PARENT CAN BE EXPANDED OR WHEN THE MAXIMUM NUMBER OF ROWS IS
+C  REACHED
+C
+C  ARGUMENTS:
+C  STRING  - STRING CONTAINING THE PURDY CROSS EXPANSION
+C  NCRS    - NUMBER OF ROWS IN THE EXPANDED TREE
+C  PNAMES  - PAMES FOR EACH NODE IN THE TREE
+C  PNMBRS  - BRANCH POINTERS AND METHOD NUMBERS FOR EACH CROSS
+C------------------------------------------------------- PARSECE
+      SUBROUTINE PARSECE(STRING,NCRS,PNAMES,PNMBRS)
+      CHARACTER STRING*(*),STRINGL*60,STRINGR*60,STRINGT*60
+      CHARACTER PNAMES(20,2)*60
+      INTEGER*4 PNMBRS(20,3),NCRS,CTYPE
+      LEVEL=20
+      NCRS=1
+      NLF=1
+      NLM=1
+      STRINGT=STRING
+      PNAMES(1,1)=STRING
+      PNMBRS(1,1)=2
+      PNMBRS(1,3)=0
+      PNAMES(1,2)=' '
+      PNMBRS(1,2)=0
+      IF(INDEX(STRINGT,'/').EQ.0) GOTO 4
+      NSLASH=1
+      CTYPE=0
+C  GET LEVEL OF PREVIOUS CROSS (NO REDUCTION FOR REPEATED BACKCROSS)
+ 1    LSLASH=NSLASH-1
+      IF(CTYPE.GT.3) LSLASH=LSLASH+1
+C  CUT THE CROSS EXPANSION AT THE HIGHEST CROSS LEVEL
+      CALL CUTCROSS(STRINGT,STRINGL,STRINGR,NSLASH,CTYPE)
+      IF(NSLASH.GT.0.AND.CTYPE.GE.0) THEN
+C  CHECK FOR CROSS LEVEL REDUCTION EXCEPT FOR BACKCROSSES
+      IF(NCRS.GT.1.AND.LSLASH.NE.NSLASH) WRITE(0,*)
+     & '*** WARNING *** CROSS LEVEL INCONSISTENT AT CROSS',NCRS
+      IF(NCRS.GT.LEVEL) GOTO 6
+      IF(NCRS.EQ.1) PNMBRS(1,3)=CTYPE
+      NCRS=NCRS+1
+C  STORE THE PARENTS OF THE LATEST CROSS IN PNAMES
+      PNAMES(NCRS,1)=STRINGL
+      PNAMES(NCRS,2)=STRINGR
+C  INITIALIZE CROSS POINTER FOR FEMALE PARENT,
+C  STORE CROSS LEVEL IN POINTER FOR MALE PARENT
+C  AND STORE CROSS TYPE
+      PNMBRS(NCRS,1)=0
+      PNMBRS(NCRS,2)=NSLASH
+      PNMBRS(NCRS,3)=CTYPE
+      ENDIF
+      IF(NLM.LT.NLF) THEN
+      NLM=NLM+1
+      PNMBRS(NLM,1)=0
+      IF(INDEX(STRINGT,'/').GT.0) PNMBRS(NLM,1)=NCRS
+      STRINGT=PNAMES(NLM,2)
+      NSLASH=PNMBRS(NLM,2)
+      CTYPE=PNMBRS(NLM,3)
+      IF(INDEX(STRINGT,'/').GT.0) GOTO 1
+      IF(NLM.EQ.NCRS) GOTO 7
+      ENDIF
+      PNMBRS(NLF,2)=0
+      IF(INDEX(STRINGT,'/').GT.0) PNMBRS(NLF,2)=NCRS
+      NLF=NLF+1
+      STRINGT=PNAMES(NLF,1)
+      NSLASH=PNMBRS(NLF,2)
+      CTYPE=PNMBRS(NLM,3)
+      GOTO 1
+C  CROSS EXPANSION COMPLETE - LIST CROSSES
+ 7    PNMBRS(NLM,2)=0
+ 4    PNMBRS(1,2)=0
+      DO 5 I=1,NCRS
+      WRITE(0,100) I,PNAMES(I,1),PNMBRS(I,1),PNAMES(I,2),PNMBRS(I,2),
+     &PNMBRS(I,3)
+ 100  FORMAT(I3,1X,A30,I3,1X,A30,2I3)
+ 5    CONTINUE
+      RETURN
+ 6    WRITE(0,*) '*** WARNING *** MAX CROSS LEVEL REACHED'
+      GOTO 4
+      END SUBROUTINE PARSECE
+C******************************************************* CUTCROSS
+C  PURPOSE:
+C  TO CUT A PURDY CROSS EXPANSION AT THE LATEST CROSS
+C
+C  ARGUMENTS:
+C  STRING  - STRING CONTAINING THE PURDY CROSS EXPANSION
+C  STRINGL - RETURNS THE CROSS EXPANSION OF THE FEMALE PARENT
+C  STRINGR - RETURNS THE CROSS EXPANSION OF THE MALE PARENT
+C  NSLASH  - RETURNS THE LEVEL OF THE LATEST CROSS
+C  IER     - IER=101 FOR SC, 4 FOR BC, 0 FOR NO CROSS AND <0 FOR ERROR
+C------------------------------------------------------- CUTCROSS
+      SUBROUTINE CUTCROSS(STRING,STRINGL,STRINGR,NSLASH,IER)
+      CHARACTER STRING*(*),STRINGL*(*),STRINGR*(*)
+      CHARACTER SLASH*1,NUMS*10,STAR*1,CTMP*3
+      DATA SLASH,NUMS,STAR /'/','1234567890',42/
+      STRINGL=' '
+      STRINGR=' '
+      NSLASH=0
+      IER=101
+C  CHECK FOR HIGHEST CROSS LEVEL /9/,/8/,...,/4/,///,//,/
+      DO 1 I=9,1,-1
+      CTMP=SLASH//NUMS(I:I)//SLASH
+      J=INDEX(STRING,CTMP)
+      IF(J.GT.0) GOTO 2
+ 1    CONTINUE
+      CTMP=' '
+      J=INDEX(STRING,'///')
+      I=3
+      IF(J.GT.0) GOTO 2
+      J=INDEX(STRING,'//')
+      I=2
+      IF(J.GT.0) GOTO 2
+      J=INDEX(STRING,SLASH)
+C  RETURN WITH NSLASH=0 IF NO CROSS FOUND
+      IF(J.EQ.0) THEN
+      IER=0
+      RETURN
+      ENDIF
+      I=1
+ 2    NSLASH=I
+      I=MIN(3,NSLASH)
+      IF(CTMP.EQ.'/1/'.OR.CTMP.EQ.'/2/'.OR.CTMP.EQ.'/3/')
+     & WRITE(0,*) '*** WARNING *** ILLEGAL CROSS SPECIFIER:'//CTMP
+C  CHECK FOR BACKCROSSES *n/ OR /n*
+      IF(J.GT.3) THEN
+      IF(STRING(J-2:J-2).EQ.STAR) GOTO 4
+      ENDIF
+      IF(STRING(J+I+1:J+I+1).EQ.STAR) GOTO 5
+C  NO BACKCROSS SO CUT STRING AND RETURN
+      STRINGL=STRING(1:J-1)
+      STRINGR=STRING(J+I:)
+      RETURN
+C  BACKCROSS TO LEFT - EXTRACT RECURRENT PARENT AND REDUCE DOSAGE
+ 4    K=INDEX(NUMS,STRING(J-1:J-1))
+      IER=4
+      IF(K.EQ.0) GOTO 6
+      STRINGL=STRING(1:J-3)
+      IF(K.GT.2) THEN
+      STRINGR=STRING(1:J-2)//NUMS(K-1:K-1)//STRING(J:)
+      ELSE
+      STRINGR=STRING(1:J-3)//STRING(J:)
+      ENDIF
+      RETURN
+C  MALE BACKCROSS - EXTRACT MALE PARENT AND REDUCE DOSAGE
+ 5    K=INDEX(NUMS,STRING(I+J:I+J))
+      IER=4
+      IF(K.EQ.0) GOTO 6
+      STRINGR=STRING(J+I+2:)
+      IF(K.GT.2) THEN
+      STRINGL=STRING(1:J+I-1)//NUMS(K-1:K-1)//STRING(J+I+1:)
+      ELSE
+      STRINGL=STRING(1:J+I-1)//STRING(J+I+2:)
+      ENDIF
+      RETURN
+ 6    IER=-1
+      WRITE(0,*) '*** ERROR *** ILLEGAL BACKCROSS'
+      RETURN
+      END SUBROUTINE CUTCROSS
+C******************************************************* ADDERIV
+C  PURPOSE:
+C  ADD A DERIVATIVE STRING
+C
+C  ARGUMENTS:
+C  DESIG  - STRING CONTAINING THE NAME
+C  IGID   - RETURNS WITH GID OF DERIVATIVE. IGID RETURNS ZERO
+C           IF THE CROSS WAS NOT FOUND AND COULD NOT BE ADDED
+C  LGID   - VALUE FOR LOCAL_GERMPLASM FIELD OF THE DERIVATIVE
+C  NORIG  - DERIVATIVE LOCATION (ELSE 0)
+C  CDATE  - DERIVATIVE DATE IF KNOWN (ELSE ' ')
+C  GERM   - RETURNS WITH THE GERMPLASM DATA OF THE DERIVATIVE
+C  IFLAG  - ENTERS AS 0 IF THE CROSS IS REQUIRED TO BE IN GMS
+C           ENTERS AS 1 IF THE CROSS MAY BE ADDED WITH METHOD 1
+C           ENTERS AS 2 IF THE GID FOR THE CROSS IS IN IER
+C  IER    - RETURNS AS 1 FOR SUCCESS 0 FOR FAILURE
+C------------------------------------------------------- ADDERIV
+      SUBROUTINE ADDERIV(DESIG,IGID,LGID,NORIG,CDATE,GERM,IFLAG,IER)
+      USE GMS_STRUCTURES
+      USE GMS_INTERFACE
+      USE GMS_TOOLS      
+      TYPE(GMS_GERMPLASM) GERM
+      TYPE(GMS_NAMEDATA) NAMDAT
+      CHARACTER DESIG*(*),NAME*60,NULL*1,ANAME*60
+      INTEGER*4 FIND_FIRST,IWK(20),NODATE,DATE,CDATE
+      DATA NULL/0/,FIND_FIRST/0/,LN/60/,NODATE/0/
+      ICROSS=0
+      IF(IFLAG.EQ.2) ICROSS=IER
+      IER=0
+      L=LEN_TRIM(DESIG)
+      IF(L.GT.59) THEN
+      PAUSE 'ADDERIV STRING TOO LONG'
+      RETURN
+      ENDIF
+      JFLAG=IFLAG
+      NAME=DESIG(1:L)//NULL
+ 3    IGID=0
+      I=L
+ 1    I=SCAN(DESIG(1:I),'-',.TRUE.)-1
+C  IF I GETS TO ZERO THEN THE CROSS IS NOT IN THE DATABASE
+      IF(I.LE.0) THEN
+      IF(JFLAG.EQ.0) RETURN
+      IF(JFLAG.EQ.1) THEN
+      ANAME=NAME(1:LEN_TRIM(NAME)-1)
+      CALL ADDGERM(1,2,0,0,0,0,0,1,2,0,0,1,ANAME,GERM,IWK,IER)
+      IF(IER.NE.1) PAUSE 25
+      ENDIF
+      JFLAG=0
+      GOTO 3
+      ENDIF
+C
+      ANAME=' 'C
+      NAME=DESIG(1:I)//NULL
+      CALL ZERONAMDAT(NAMDAT)
+      I4=GMS_findName2(NAME,NAMDAT,GERM,ANAME,LN,FIND_FIRST)
+      IF(INDEX(NAME,'-').EQ.0.AND.ICROSS.NE.0)
+     & I4=GMS_getGermplasm2(ICROSS,GERM,NAMDAT,ANAME,LN)
+      IF(I4.NE.1) GOTO 1
+C IF THE SOURCE IS THE CROSS CHECK THAT IT IS GENERATIVE
+      IF(INDEX(NAME,'-').EQ.0) THEN
+      DO WHILE (I4.EQ.1.AND.GERM%NO_PROGENITORS.LE.0)
+      I4=GMS_findName2(NAME,NAMDAT,GERM,ANAME,LN,1)
+      ENDDO
+      IF(I4.NE.1) GOTO 1
+      ENDIF
+C OTHERWISE GET ITS GROUP AND SOURCE
+      KGID=GERM%GERMPLASM_ID
+      JGID=GERM%PROGENITOR_ID1
+      IF(GERM%NO_PROGENITORS.GE.0) JGID=KGID
+      IF(JGID.EQ.0) RETURN
+      IF(IFLAG.EQ.2.AND.JGID.NE.ICROSS) RETURN
+ 2    J=I+2
+      I=INDEX(DESIG(J:),'-')+J-2
+      IF(I.LT.J) I=L
+      LL=0
+      DATE=NODATE
+      LOCN=0
+      IF(I.EQ.L) THEN
+      LL=LGID
+      DATE=CDATE
+      LOCN=NORIG
+      ENDIF
+      IF(ICROSS.NE.0.AND.ICROSS.NE.JGID) RETURN
+      CALL ADDGERM(205,-1,JGID,KGID,LL,LOCN,DATE,1,
+     & 5,LOCN,DATE,1,DESIG(1:I),GERM,IWK,IER)
+      IF(IER.NE.1) RETURN
+      KGID=GERM%GERMPLASM_ID
+      IF(I.LT.L) GOTO 2
+      IGID=KGID
+      IER=1
+      RETURN
+      END SUBROUTINE ADDERIV
+C******************************************************* NMTYP
+C  PURPOSE:
+C  GET NAME TYPE
+C---- LAST UPDATE 12/10/97 ----------------------------- NMTYP
+      INTEGER*4 FUNCTION NMTYP(DESIG)
+      CHARACTER DESIG*(*),NUMS*10
+      DATA NUMS/'0123456789'/
+      NMTYP=6
+      I=INDEX(DESIG,'-')-1
+      J=INDEX(DESIG(I+2:),'-')
+      IF(I.GT.1.AND.(DESIG(1:2).EQ.'IR'.OR.DESIG(1:2).EQ.'CT'
+     & .OR.DESIG(1:2).EQ.'P ')) J=1
+      IF(I.LT.0) I=1
+      IF(I.LE.1.OR.INDEX(NUMS,DESIG(I:I)).EQ.0) J=0
+      IF(J.GT.0) NMTYP=5
+      IF(INDEX(DESIG,'/').NE.0) NMTYP=3
+      IF(NMTYP.EQ.6.AND.DESIG(1:4).EQ.'IRGC'.AND.
+     & INDEX(NUMS,DESIG(5:5)).NE.0) NMTYP=1
+      RETURN
+      END FUNCTION NMTYP
+C******************************************************* NAMLST
+C  PURPOSE:
+C  LIST ALL GERMPLASM WITH A GIVEN NAME OR GIVE CROSS HITORY
+C  AND ALLOW THE USER TO SELECT ONE
+C
+C  NAMLST WILL SEARCH FOR THE NAME, LIST ALL NAMES OF ALL
+C  GERMPLASM HAVING THAT NAME OR STANDARD VARIANTS OF IT.
+C  IF FCPS=1 NAMLST WILL SEARCH FOR CROSSES BY PARENTAL
+C  COMBINATION AS WELL AS NAME AND ADD THEM TO THE LIST
+C  NAMLST WILL THEN ASK THE USER TO SELECT AN OCCURANCE AND
+C  RETURN THE GID OF THAT SELECTION IN IGID AND THE NAME DATA
+C  IN NAMDAT.
+C
+C  ARGUMENTS:
+C  IOPT   = 0 FOR LISTING ONLY (NO SELECTION) (-1 to LOG as well)
+C         = 1 TO SELECT A SINGLE MATCH AUTOMATICALLY
+C         = 2 OTHERWISE
+C  NAME   - STRING CONTAINING THE NAME TO BE SEARCHED
+C  IGID   - GID OF SELECTED GERMPLASM OR ZERO FOR NONE
+C  ISRH   = 0 SEARCH FOR ALL HITS
+C         = 1 GENERATIVE ONLY
+C         = 2 DERIVATIVE ONLY
+C         = 3 NO ACCESSION NAME
+C
+C  COMMON OUTPUT
+C  NLST   - NUMBER OF MATCHES TO DESIG
+C  LLST   - ARRAY OF MATCHING GIDS
+C  MXLST  - MAX ENTRIES ALLOWED IN LLST
+C------------------------------------------------------- NAMLST
+      SUBROUTINE NAMLST(IOPT,NAME,IGID,ISRH,FCPS)
+      USE GMS_STRUCTURES
+      USE GMS_INTERFACE
+      USE GMS_TOOLS
+      PARAMETER (MAXTREE=30000,MAXLIST=3000)
+      CHARACTER NAME*(*),DESIG*256,CWK*256,AWK*1000
+      CHARACTER NULL*1,BELL*1,MRK*1,CTMP*50
+      INTEGER*4 FIND_FIRST,FIND_NEXT,IWK(64),DSLSH,DITTO,FCPS
+      TYPE(GMS_GERMPLASM) GERM
+      TYPE(GMS_NAMEDATA) NAMDAT,ACCNAM
+      TYPE(GMS_ATTRIBUTE) ATTB
+      EQUIVALENCE (IWK(1),CWK)
+      COMMON /WRK/ NLST,MXLST,LLST(MAXLIST),AWK
+      DATA FIND_FIRST,FIND_NEXT,LN,NULL /0,1,256,0/,BELL/7/
+      DATA DSLSH,DITTO/'./  ','"   '/
+C  ADD THE NULL CHARACTER TO THE END OF THE NAME FOR C COMPATIBILITY
+      BELL=G_BELL
+ 11   NLST=0
+      CWK=NAME
+      LNTYP=0
+      LNLOC=0
+      I4=LEN_TRIM(NAME)
+      J=INDEX(NAME,',NTYPE=')
+      IF(J.GT.0) THEN
+      LNTYP=INUMBA(IWK,J+7,80,L,M)
+      IF(M.LT.0) I4=J-1
+      ENDIF
+      K=INDEX(NAME,',NLOC=')
+      IF(K.GT.0) THEN
+      LNLOC=INUMBA(IWK,K+6,80,L,M)
+      IF(M.LT.0) I4=MIN(I4,K-1)
+      ENDIF
+      DESIG=NAME(1:I4)
+      NAME=' '
+ 2    J=LEN_TRIM(DESIG)
+      DESIG(J+1:J+1)=NULL
+C  LOOP THROUGH NAME MATCHES AND COUNT OCCURANCES (NLST)
+      CALL ZERONAMDAT(NAMDAT)
+      NAMDAT%TYPE=LNTYP
+      NAMDAT%LOCATION=LNLOC
+      I4=GMS_findName3(DESIG,NAMDAT,GERM,CWK,LN,FIND_FIRST)
+      DO WHILE (I4.EQ.1)
+C      I=GMS_getGermplasm(NAMDAT%GERMPLASM,GERM)
+      IF(ISRH.EQ.1.AND.GERM%NO_PROGENITORS.LT.0) GOTO 28
+      IF(ISRH.EQ.2.AND.GERM%NO_PROGENITORS.GE.0) GOTO 28
+      IF(ISRH.EQ.3.OR.ISRH.EQ.4) THEN
+      ACCNAM%GERMPLASM=NAMDAT%GERMPLASM
+      ACCNAM%TYPE=1
+      ACCNAM%STATUS=0
+      I=GMS_getName(ACCNAM,CWK,80,0)
+      IF(ISRH.EQ.3.AND.I.EQ.1) GOTO 28
+      IF(ISRH.EQ.4.AND.I.NE.1) GOTO 28
+      ENDIF
+C  WRITE OUT HEADING FOR LIST OF OCCURANCES
+      IF(NLST.EQ.0) WRITE(0,102) DESIG(1:LEN_TRIM(DESIG)),LNTYP,LNLOC
+ 102  FORMAT(' SEARCH FOR: ',A,' WITH TYPE=',I3,' AND LOCATION=',I4/
+     &' NO. NAMES',
+     &45X,'GID NTYP METH LOC  DATE')
+C  LOOK FOR DOUBLE HITS
+      MRK=' '
+      DO 27 L=1,NLST
+      IF(LLST(L).EQ.NAMDAT%GERMPLASM) GOTO 28
+ 27   CONTINUE
+      IF(IOPT.GE.0.AND.NLST.GT.0.AND.MOD(NLST,20).EQ.0) THEN
+      WRITE(0,113)
+ 113  FORMAT(' PARTIAL LIST OF MATCHES, ENTER BLANK TO CONTINUE,',
+     &' OR ./ TO QUIT')
+      IGID=LINPUT(1,-1,IER,IWK)
+      IF(IWK(1).EQ.DSLSH) RETURN
+      NAME=CWK(1:80)
+      IF(NAME.NE.' ') RETURN
+      ENDIF
+      NLST=NLST+1
+      CTMP=LSTNMS(NAMDAT%GERMPLASM,47)
+      WRITE(0,103) NLST,TRIM(CTMP),
+     &NAMDAT%GERMPLASM,MRK,FCODE(NAMDAT%TYPE),MCODE(GERM%METHOD),
+     &CNTRY(GERM%LOCATION),GERM%DATE/10000
+      IF(IOPT.EQ.-1) WRITE(3,103) NLST,TRIM(CTMP),
+     &NAMDAT%GERMPLASM,MRK,FCODE(NAMDAT%TYPE),MCODE(GERM%METHOD),
+     &CNTRY(GERM%LOCATION),GERM%DATE/10000
+ 103  FORMAT(I3,1X,A,T50,I9,A1,A5,1X,2A4,I5)
+C  STORE NAME DATA FOR EACH OCCURANCE
+      LLST(NLST)=GERM%GERMPLASM_ID
+      IF(NLST.EQ.MXLST) GOTO 10
+ 28   I4=GMS_findName3(DESIG,NAMDAT,GERM,CWK,LN,FIND_NEXT)
+      END DO
+C IF FCPS=0 AND NAME IS A CROSS, SEARCH BY PARENTAL COMBINATION
+      IF(FCPS.EQ.1.AND.INDEX(DESIG,'/').GT.0
+     &.AND.INDEX(DESIG,'%').EQ.0) THEN
+      MXLST=6000
+      NFC=NLST+1
+      CWK=DESIG(1:LEN_TRIM(DESIG)-1)
+      CALL FCROSS1(CWK,IER)
+      IF(IER.GE.MXLST.OR.IER.LE.0) WRITE(0,120) IER
+ 120  FORMAT(' *** WARNING *** ERROR IN FINDCROSS',I5)
+      K=NFC-1
+      DO 16 I=NFC,NLST
+      DO 15 J=1,NFC-1
+      IF(LLST(I).EQ.LLST(J)) GOTO 16
+ 15   CONTINUE
+      K=K+1
+      LLST(K)=LLST(I)
+      I4=GMS_GetGermplasm2(LLST(K),GERM,NAMDAT,CWK,80)
+      CTMP=LSTNMS(NAMDAT%GERMPLASM,47)
+      WRITE(0,103) K,TRIM(CTMP),NAMDAT%GERMPLASM,' ',
+     &FCODE(NAMDAT%TYPE),MCODE(GERM%METHOD),
+     &CNTRY(GERM%LOCATION),GERM%DATE/10000
+ 16   CONTINUE
+      NLST=K
+      ENDIF
+C CHECK FOR NULL LIST
+      IF(NLST.EQ.0) THEN
+      IGID=0
+      WRITE(0,101) DESIG(1:LEN_TRIM(DESIG))
+ 101  FORMAT(1X,A,' NOT FOUND IN GMS',T68,'GID:        0')
+      RETURN
+      ENDIF
+C  CHECK FOR FULL LIST
+ 10   IF(NLST.EQ.MXLST) WRITE(0,116)
+ 116  FORMAT(' *** WARNING *** MAXIMUM MATCHES FOUND')
+C  SELECT ENTRY FROM LIST
+      IGID=0
+      IF(IOPT.LE.0) RETURN
+ 112  FORMAT(' CHOOSE ENTRY (ZERO FOR NONE, BLANK FOR FIRST)',A1)
+      IER=-1
+      IF(IOPT.NE.1.OR.NLST.GT.1) THEN
+      WRITE(0,112) BELL
+      IGID=LINPUT(1,-1,IER,IWK)
+      ENDIF
+      IF(IER.EQ.-1) IGID=1
+      IF(IER.EQ.1) THEN
+C  CHECK FOR A COMMAND
+      IF(CWK(1:1).EQ.'.') THEN
+      IF(VERIFY(CWK(2:80),'0123456789 ').NE.0) RETURN
+      L=2
+      IGID=INUMBA(IWK,L,80,I,IER)
+      IF(IER.GE.0) RETURN
+      CWK=' '
+      ELSE
+C  CHECK IF IWK(1)='"   '
+      IF(CWK.NE.'"') NAME=CWK
+      GOTO 11
+      ENDIF
+      ENDIF
+      IF(IGID.EQ.0) RETURN
+ 17   IF(IGID.LT.0.OR.IGID.GT.NLST) THEN
+      WRITE(0,114) BELL
+ 114  FORMAT(' *** ERROR *** CHOICE OUT OF RANGE - RE-ENTER',A1)
+      GOTO 10
+      ENDIF
+      IGID=LLST(IGID)
+      RETURN
+      END SUBROUTINE NAMLST
+C******************************************************* FCROSS1
+C  PURPOSE:
+C  FIND CROSSES FROM A PURDY STRING
+C
+C  ARGUMENTS:
+C  STRING - CHARACTER VARIABLE CONTAINING THE PURDY STRING
+C  IER    - ERROR RETURN: 1<IER<MXLST FOR NORMAL TERMINATION
+C           (IER CONTAINS THE MAXIMUM ELEMENTS OF LLST USED)
+C           IER=MXLST IF WORKSPACE EXCEEDED (ANALYIS INCOMPLETE)
+C           IER<=0 FOR CROSS FORMAT ERROR OR DLL ERROR
+C  COMMON ARGUMENTS:
+C  NL   - NUMBER OF GIDS IN THE CURRENT LIST
+C  MXLST- SIZE OF COMMON WORK ARRAY LLST
+C  LLST - ARRAY OF CURRENT CROSS AND PARENT GIDS
+C---- LAST UPDATE 19/10/07 ----------------------------- FCROSS1
+      RECURSIVE SUBROUTINE FCROSS1(STRING,IER)
+      USE GMS_STRUCTURES
+      USE GMS_INTERFACE
+      USE GMS_TOOLS
+      PARAMETER (MAXTREE=30000,MAXLIST=3000)
+      CHARACTER STRING*(*),STRINGF*256,STRINGM*256,CTMP*256,NULL*1
+      TYPE(GMS_GERMPLASM) GERM
+      TYPE(GMS_NAMEDATA) NAMDAT
+      COMMON /WRK/ NL,MXLST,LLST(MAXLIST)
+      DATA NULL/0/
+      IER=0
+      METH=0
+      CALL CUTCROSS(STRING,STRINGF,STRINGM,I4,METH)
+      IF(METH.LE.0) RETURN
+14    NFF=NL+1
+
+C  IF THE PARENT IS A CROSS LOOK FOR IT
+      IF(INDEX(STRINGF,'/').GT.0) THEN
+      CALL FCROSS1(STRINGF,IER)
+      IF(IER.LT.0) RETURN
+C  FOR EACH CROSS FOUND, LOOK FOR ALL DERIVATIVES
+      DO 4 I=NFF,NL
+	CALL ZEROGERM(GERM)
+      GERM%NO_PROGENITORS=-1
+      GERM%PROGENITOR_ID1=LLST(I)
+      I4=GMS_FindGermplasm(GERM,0)
+      DO WHILE (I4.EQ.1)
+      IER=MAX(IER,NL)
+      IF(NL.EQ.MXLST) RETURN
+      NL=NL+1
+      LLST(NL)=GERM%GERMPLASM_ID
+      I4=GMS_FindGermplasm(GERM,1)
+      END DO
+      IF(I4.NE.0) IER=-1
+      IF(IER.LT.0) RETURN
+ 4    CONTINUE
+      ENDIF
+C CHECK FOR WILD CARD AND REMOVE '^'
+      IWLD=0
+      I=LEN_TRIM(STRINGF)
+      IF(STRINGF(I:I).EQ.'^'.AND.INDEX(STRINGF,'/').EQ.0) IWLD=1
+      K=I-IWLD
+      IF(INDEX(STRINGF,'^').GT.0) THEN
+      CTMP=STRINGF
+      STRINGF=' '
+      K=0
+      DO 7 J=1,I
+      IF(CTMP(J:J).EQ.'^') GOTO 7
+      K=K+1
+      STRINGF(K:K)=CTMP(J:J)
+ 7    CONTINUE
+      ENDIF
+      K=K+1
+      STRINGF(K:K)=NULL
+C FIND CROSSES BY NAME
+      NAMDAT%STATUS=0
+      NAMDAT%TYPE=0
+      NAMDAT%LOCATION=0
+      I4=GMS_findName2(STRINGF,NAMDAT,GERM,CTMP,256,0)
+      DO WHILE (I4.EQ.1)
+      DO 5 I=NFF,NL
+      IF(LLST(I).EQ.GERM%GERMPLASM_ID) GOTO 6
+ 5    CONTINUE
+      NL=NL+1
+      IER=MAX(IER,NL)
+      IF(NL.EQ.MXLST) RETURN
+C      NL=NL+1
+      LLST(NL)=GERM%GERMPLASM_ID
+      IF(GERM%NO_PROGENITORS.EQ.2.OR.IWLD.EQ.1) THEN
+	I4=GROUPID(GERM)
+	CALL ZEROGERM(GERM)
+      GERM%PROGENITOR_ID1=I4
+      GERM%NO_PROGENITORS=-1
+      I4=GMS_FindGermplasm(GERM,0)
+      DO WHILE (I4.EQ.1)
+      DO 8 I=NFF,NL
+      IF(LLST(I).EQ.GERM%GERMPLASM_ID) GOTO 9
+ 8    CONTINUE
+      NL=NL+1 
+      IER=MAX(IER,NL)
+      IF(NL.EQ.MXLST) RETURN
+C      NL=NL+1
+      LLST(NL)=GERM%GERMPLASM_ID
+ 9    I4=GMS_FindGermplasm(GERM,1)
+      END DO
+      ENDIF
+ 6    I4=GMS_findName2(STRINGF,NAMDAT,GERM,CTMP,256,1)
+      END DO
+      IF(I4.NE.0) IER=-1
+C      CALL FPARENTS(NFF,STRINGF,IER)
+      IF(IER.LE.0) RETURN
+      NFM=NL+1
+C  IF THE PARENT IS A CROSS LOOK FOR IT
+      IF(INDEX(STRINGM,'/').GT.0) THEN
+      CALL FCROSS1(STRINGM,IER)
+      IF(IER.LT.0) RETURN
+C  FOR EACH CROSS FOUND, LOOK FOR ALL DERIVATIVES
+      DO 24 I=NFM,NL
+	CALL ZEROGERM(GERM)
+      GERM%NO_PROGENITORS=-1
+      GERM%PROGENITOR_ID1=LLST(I)
+      I4=GMS_FindGermplasm(GERM,0)
+      DO WHILE (I4.EQ.1)
+      IER=MAX(IER,NL)
+      IF(NL.EQ.MXLST) RETURN
+      NL=NL+1
+      LLST(NL)=GERM%GERMPLASM_ID
+      I4=GMS_FindGermplasm(GERM,1)
+      END DO
+      IF(I4.NE.0) IER=-1
+      IF(IER.LT.0) RETURN
+ 24   CONTINUE
+      ENDIF
+C CHECK FOR WILD CARD AND REMOVE '^'
+      IWLD=0
+      I=LEN_TRIM(STRINGM)
+      IF(STRINGM(I:I).EQ.'^'.AND.INDEX(STRINGM,'/').EQ.0) IWLD=1
+      K=I-IWLD
+      IF(INDEX(STRINGM,'^').GT.0) THEN
+      CTMP=STRINGM
+      STRINGM=' '
+      K=0
+      DO 27 J=1,I
+      IF(CTMP(J:J).EQ.'^') GOTO 27
+      K=K+1
+      STRINGM(K:K)=CTMP(J:J)
+ 27   CONTINUE
+      ENDIF
+      K=K+1
+      STRINGM(K:K)=NULL
+C FIND CROSSES BY NAME
+      NAMDAT%STATUS=0
+      NAMDAT%TYPE=0
+      NAMDAT%LOCATION=0
+      I4=GMS_findName2(STRINGM,NAMDAT,GERM,CTMP,256,0)
+      DO WHILE (I4.EQ.1)
+      DO 25 I=NFM,NL
+      IF(LLST(I).EQ.GERM%GERMPLASM_ID) GOTO 26
+ 25   CONTINUE
+      NL=NL+1
+      IER=MAX(IER,NL)
+      IF(NL.EQ.MXLST) RETURN
+C      NL=NL+1
+      LLST(NL)=GERM%GERMPLASM_ID
+      IF(GERM%NO_PROGENITORS.EQ.2.OR.IWLD.EQ.1) THEN
+	I4=GROUPID(GERM)
+	CALL ZEROGERM(GERM)
+      GERM%PROGENITOR_ID1=I4
+      GERM%NO_PROGENITORS=-1
+      I4=GMS_FindGermplasm(GERM,0)
+      DO WHILE (I4.EQ.1)
+      DO 28 I=NFM,NL
+      IF(LLST(I).EQ.GERM%GERMPLASM_ID) GOTO 29
+ 28   CONTINUE
+      NL=NL+1 
+      IER=MAX(IER,NL)
+      IF(NL.EQ.MXLST) RETURN
+C      NL=NL+1
+      LLST(NL)=GERM%GERMPLASM_ID
+ 29   I4=GMS_FindGermplasm(GERM,1)
+      END DO
+      ENDIF
+ 26   I4=GMS_findName2(STRINGM,NAMDAT,GERM,CTMP,256,1)
+      END DO
+      IF(I4.NE.0) IER=-1
+     
+C      CALL FPARENTS(NFM,STRINGM,IER)
+      IF(IER.LE.0) RETURN
+      NFC=NL+1
+C THE PARENTS ARE NOW IN LLST(NFF...NFM-1) AND LLST(NFM...NFC-1)
+      DO 2 I=NFF,NFM-1
+      DO 1 J=NFM,NFC-1
+	CALL ZEROGERM(GERM)
+      GERM%NO_PROGENITORS=2
+      GERM%PROGENITOR_ID1=LLST(I)
+      GERM%PROGENITOR_ID2=LLST(J)
+      I4=GMS_FindGermplasm(GERM,0)
+      DO WHILE (I4.EQ.1)
+      IER=MAX(IER,NL)
+      IF(NL.EQ.MXLST) RETURN
+      NL=NL+1
+      LLST(NL)=GERM%GERMPLASM_ID
+      I4=GMS_FindGermplasm(GERM,1)
+      END DO
+      IF(I4.NE.0) IER=-1
+      IF(IER.LT.0) RETURN
+ 1    CONTINUE
+ 2    CONTINUE
+C  FINISHED WITH THE PARENTS, SO MOVE THE CROSSES UP THE ARRAY
+      DO 3 I=NFC,NL
+      LLST(NFF+I-NFC)=LLST(I)
+ 3    CONTINUE
+      NL=NFF+NL-NFC
+      IF(METH.EQ.4) THEN
+      METH=0
+      CTMP=STRINGF
+      STRINGF=STRINGM
+      STRINGM=CTMP
+      GOTO 14
+      ENDIF
+      RETURN
+      END SUBROUTINE FCROSS1      
+C******************************************************* FCROSS
+C  PURPOSE:
+C  FIND CROSSES FROM A PURDY STRING
+C
+C  ARGUMENTS:
+C  STRING - CHARACTER VARIABLE CONTAINING THE PURDY STRING
+C  IER    - ERROR RETURN: 1<IER<MXLST FOR NORMAL TERMINATION
+C           (IER CONTAINS THE MAXIMUM ELEMENTS OF LLST USED)
+C           IER=MXLST IF WORKSPACE EXCEEDED (ANALYIS INCOMPLETE)
+C           IER<=0 FOR CROSS FORMAT ERROR OR DLL ERROR
+C  COMMON ARGUMENTS:
+C  NL   - NUMBER OF GIDS IN THE CURRENT LIST
+C  MXLST- SIZE OF COMMON WORK ARRAY LLST
+C  LLST - ARRAY OF CURRENT CROSS AND PARENT GIDS
+C---- LAST UPDATE 16/03/00 ----------------------------- FCROSS
+      RECURSIVE SUBROUTINE FCROSS(STRING,IER)
+      USE GMS_STRUCTURES
+      USE GMS_INTERFACE
+      USE GMS_TOOLS
+      PARAMETER (MAXTREE=30000,MAXLIST=3000)
+      CHARACTER STRING*(*),STRINGF*80,STRINGM*80,CTMP*80,NULL*1
+      TYPE(GMS_GERMPLASM) GERM
+      TYPE(GMS_NAMEDATA) NAMDAT
+      COMMON /WRK/ NL,MXLST,LLST(MAXLIST)
+      DATA NULL/0/
+      IER=0
+      METH=0
+      CALL CUTCROSS(STRING,STRINGF,STRINGM,I4,METH)
+      IF(METH.LE.0) RETURN
+4     NFF=NL+1
+      CALL FPARENTS(NFF,STRINGF,IER)
+      IF(IER.LE.0) RETURN
+      NFM=NL+1
+      CALL FPARENTS(NFM,STRINGM,IER)
+      IF(IER.LE.0) RETURN
+      NFC=NL+1
+C THE PARENTS ARE NOW IN LLST(NFF...NFM-1) AND LLST(NFM...NFC-1)
+      DO 2 I=NFF,NFM-1
+      DO 1 J=NFM,NFC-1
+	CALL ZEROGERM(GERM)
+      GERM%NO_PROGENITORS=2
+      GERM%PROGENITOR_ID1=LLST(I)
+      GERM%PROGENITOR_ID2=LLST(J)
+      I4=GMS_FindGermplasm(GERM,0)
+      DO WHILE (I4.EQ.1)
+      IER=MAX(IER,NL)
+      IF(NL.EQ.MXLST) RETURN
+      NL=NL+1
+      LLST(NL)=GERM%GERMPLASM_ID
+      I4=GMS_FindGermplasm(GERM,1)
+      END DO
+      IF(I4.NE.0) IER=-1
+      IF(IER.LT.0) RETURN
+ 1    CONTINUE
+ 2    CONTINUE
+C  FINISHED WITH THE PARENTS, SO MOVE THE CROSSES UP THE ARRAY
+      DO 3 I=NFC,NL
+      LLST(NFF+I-NFC)=LLST(I)
+ 3    CONTINUE
+      NL=NFF+NL-NFC
+      IF(METH.EQ.4) THEN
+      METH=0
+      CTMP=STRINGF
+      STRINGF=STRINGM
+      STRINGM=CTMP
+      GOTO 4
+      ENDIF
+      RETURN
+      END SUBROUTINE FCROSS
+C******************************************************* FPARENTS
+C  PURPOSE:
+C  FIND PARENTS OF A CROSS FROM FROM A PURDY STRING
+C
+C  ARGUMENTS:
+C  NP - NUMBER OF PARENTS ALREADY IN LIST
+C  PARENT - CHARACTER VARIABLE CONTAINING THE PARENT NAME
+C  COMMON ARGUMENTS:
+C  NL - NUMBER OF GIDS IN THE CURRENT LIST
+C---- LAST UPDATE 09/03/00 ----------------------------- FPARENTS
+      RECURSIVE SUBROUTINE FPARENTS(NP,PARENT,IER)
+      USE GMS_STRUCTURES
+      USE GMS_INTERFACE
+      USE GMS_TOOLS
+      PARAMETER (MAXTREE=30000,MAXLIST=3000)
+      CHARACTER PARENT*(*),CTMP*256,NULL*1
+      TYPE(GMS_GERMPLASM) GERM
+      TYPE(GMS_NAMEDATA) NAMDAT
+      COMMON /WRK/ NL,MXLST,LLST(MAXLIST)
+      DATA NULL/0/
+      IF(IER.LT.0) RETURN
+C  IF THE PARENT IS A CROSS LOOK FOR IT
+      IF(INDEX(PARENT,'/').GT.0) THEN
+      CALL FCROSS(PARENT,IER)
+      IF(IER.LT.0) RETURN
+C  FOR EACH CROSS FOUND, LOOK FOR ALL DERIVATIVES
+      DO 4 I=NP,NL
+	CALL ZEROGERM(GERM)
+      GERM%NO_PROGENITORS=-1
+      GERM%PROGENITOR_ID1=LLST(I)
+      I4=GMS_FindGermplasm(GERM,0)
+      DO WHILE (I4.EQ.1)
+      IER=MAX(IER,NL)
+      IF(NL.EQ.MXLST) RETURN
+      NL=NL+1
+      LLST(NL)=GERM%GERMPLASM_ID
+      I4=GMS_FindGermplasm(GERM,1)
+      END DO
+      IF(I4.NE.0) IER=-1
+      IF(IER.LT.0) RETURN
+ 4    CONTINUE
+      ENDIF
+C CHECK FOR WILD CARD AND REMOVE '^'
+      IWLD=0
+      I=LEN_TRIM(PARENT)
+      IF(PARENT(I:I).EQ.'^'.AND.INDEX(PARENT,'/').EQ.0) IWLD=1
+      K=I-IWLD
+      IF(INDEX(PARENT,'^').GT.0) THEN
+      CTMP=PARENT
+      PARENT=' '
+      K=0
+      DO 7 J=1,I
+      IF(CTMP(J:J).EQ.'^') GOTO 7
+      K=K+1
+      PARENT(K:K)=CTMP(J:J)
+ 7    CONTINUE
+      ENDIF
+      K=K+1
+      PARENT(K:K)=NULL
+C FIND CROSSES BY NAME
+      NAMDAT%STATUS=0
+      NAMDAT%TYPE=0
+      NAMDAT%LOCATION=0
+      I4=GMS_findName2(PARENT,NAMDAT,GERM,CTMP,256,0)
+      DO WHILE (I4.EQ.1)
+      DO 5 I=NP,NL
+      IF(LLST(I).EQ.GERM%GERMPLASM_ID) GOTO 6
+ 5    CONTINUE
+      NL=NL+1
+      IER=MAX(IER,NL)
+      IF(NL.EQ.MXLST) RETURN
+C      NL=NL+1
+      LLST(NL)=GERM%GERMPLASM_ID
+      IF(GERM%NO_PROGENITORS.EQ.2.OR.IWLD.EQ.1) THEN
+	I4=GROUPID(GERM)
+	CALL ZEROGERM(GERM)
+      GERM%PROGENITOR_ID1=I4
+      GERM%NO_PROGENITORS=-1
+      I4=GMS_FindGermplasm(GERM,0)
+      DO WHILE (I4.EQ.1)
+      DO 8 I=NP,NL
+      IF(LLST(I).EQ.GERM%GERMPLASM_ID) GOTO 9
+ 8    CONTINUE
+      NL=NL+1 
+      IER=MAX(IER,NL)
+      IF(NL.EQ.MXLST) RETURN
+C      NL=NL+1
+      LLST(NL)=GERM%GERMPLASM_ID
+ 9    I4=GMS_FindGermplasm(GERM,1)
+      END DO
+      ENDIF
+ 6    I4=GMS_findName2(PARENT,NAMDAT,GERM,CTMP,256,1)
+      END DO
+      IF(I4.NE.0) IER=-1
+      RETURN
+      END SUBROUTINE FPARENTS
+C******************************************************* ADDCROSS
+C  PURPOSE:
+C  EXPAND A PURDEY CROSS HISTORY, COMPARE IT WITH AN ENTRY
+C  IN GMS AND REPLACE OR ADD A CROSS RECORD IF NECESSARY
+C
+C  ARGUMENTS:
+C  IGID  - ENTERS WITH THE GID OF GERMPLASM TO BE COMPARED
+C          WITH A NEW ENTRY OR ZERO IF THERE IS NO EXISTING MATCH
+C          RETURNS WITH THE GID OF THE ACCEPTED ENTRY OR ZERO
+C          TO SKIP THE NEW ENTRY
+C  DESIG - NAME OF NEW ENTRY
+C  DESIGA- ALTERNATE NAME FOR NEW ENTRY (ELSE BLANK)
+C  LGID  - RECORD OF NEW ENTRY ON INPUT STREAM (ELSE ZERO)
+C  CDATE - GERMPLASM DATE FOR NEW ENTRY
+C  METHOD- GERMPLASM METHOD FOR NEW ENTRY
+C  NTYPE - NAME TYPE FOR DESIG
+C  NTYPEA- NAME TYPE FOR DESIGA (ELSE ZERO)
+C  NDATE - NAME DATE FOR DESIG
+C  IGCR  - GID OF THE GROUP SOURCE IF KNOWN
+C  CROSS - PURDEY CROSS STRING FOR NEW ENTRY (GROUP SOURCE)
+C  GERM  - RETURNS WITH GERMPLASM DATA FOR NEW ENTRY
+C  NAMDAT- RETURNS WITH NAME DATA FOR NEW ENTRY
+C---- LAST UPDATE 05/09/97 ----------------------------- ADDCROSS
+      SUBROUTINE ADDCROSS(IGID,DESIG,DESIGA,LGID,CDATE,
+     & METHOD,NTYPE,NTYPEA,NDATE,IGCR,CROSS,GERM,NAMDAT)
+      USE GMS_STRUCTURES
+      USE GMS_INTERFACE
+      USE GMS_TOOLS      
+      CHARACTER DESIG*(*),CROSS*(*),AVAL*60,DESIGA*(*),TAIL*60
+      CHARACTER PDC(20,2)*60,PMC(20,2)*60,BELL*1
+      CHARACTER DATE*10,TIME*8,PNAME*80
+      INTEGER*4 PDN(20,3),PMN(20,3),IWK(20),ICHNG(100),CDATE
+      TYPE(GMS_NAMEDATA) NAMDAT,NAMS(100)
+      TYPE(GMS_GERMPLASM) GERM,GERM1,GERM2
+      DATA BELL,NODATE,NREF,NLOCN/7,0,26,10226/
+      BELL=G_BELL
+      TAIL=' '
+C-------------------------------------------------------
+C  PEDIGREE EXTRACTION AND PRESENTATION
+C-------------------------------------------------------
+ 8     IF(IGID.NE.0) THEN
+C
+C  PARSE THE CROSS STRING FOR ENTRIES WHICH ARE IN GMS
+C
+      WRITE(0,*) 'CROSS HISTORY FROM PURDY STRING:'
+      CALL PARSECE(CROSS,NDC,PDC,PDN)
+C
+C  EXTRACT THE CROSS HISTORY FROM GMS
+C
+      WRITE(0,*) 'CROSS HISTORY FROM GMS:'
+      CALL PARSEPM(6,IGID,NMC,PMC,PMN)
+      ELSE
+C
+C  PARSE THE CROSS STRING FOR ENTRIES WHICH ARE NOT IN GMS
+C
+      WRITE(0,*) 'CROSS HISTORY FROM PURDY STRING:'
+      CALL PARSECE(CROSS,NDC,PDC,PDN)
+      WRITE(0,106) DESIG(1:LEN_TRIM(DESIG))
+ 106  FORMAT(1X,A,' NOT FOUND IN GMS')
+      END IF
+C-------------------------------------------------------
+C  USER DECISION
+C-------------------------------------------------------
+ 9    WRITE(0,200) BELL
+ 200  FORMAT(' DO YOU WANT TO:'/
+     &'   1. SKIP THE CURRENT IRGD ENTRY'/
+     &'   2. ACCEPT ENTRY WITH GMS PEDIGREE'/
+     &'   3. ADD ENTRY WITHOUT PEDIGREE OR ADD NEW DERIVATIVE'/
+     &'   4. ADD PEDIGREE FOR NEW OR EXISTING ENTRY'/
+     &'   5. SEARCH FOR ALTERNATIVE NAME'/
+     &' ENTER 1,2 ... OR 5',A1)
+      K=LINPUT(1,-1,IER,IWK)
+      IF(IER.EQ.-1) K=1
+      IF(K.LT.1.OR.K.GT.5) GOTO 9
+C-------------------------------------------------------
+C  PEDIGREE PROCESSING
+C-------------------------------------------------------
+C-------------------------------------------------------
+C  PEDIGREE PROCESSING
+C  1. SKIP THE CURRENT ENTRY
+C-------------------------------------------------------
+      IF(K.EQ.1) THEN
+      KGID=0
+C-------------------------------------------------------
+C  PEDIGREE PROCESSING
+C  2. ACCEPT ENTRY WITH GMS PEDIGREE
+C-------------------------------------------------------
+      ELSE IF(K.EQ.2) THEN
+      IF(IGID.EQ.0) THEN
+      WRITE(0,118) BELL
+ 118  FORMAT(' *** ERROR *** NO EXISTING ENTRY - RE ENTER',A1)
+      GOTO 9
+      ENDIF
+      KGID=IGID
+C-------------------------------------------------------
+C  PEDIGREE PROCESSING
+C  3. ADD ENTRY WITHOUT PEDIGREE OR ADD NEW DERIVATIVE
+C-------------------------------------------------------
+      ELSE IF(K.EQ.3) THEN
+      KGID=0
+C  IF THE ENTRY TO ADD IS AN IR DERIVATIVE USE ADDERIV
+      IF(DESIG(1:3).EQ.'IR '.AND.INDEX(DESIG,'/').EQ.0
+     & .AND.INDEX('0123456789',DESIG(4:4)).NE.0) THEN
+      IF(IGID.NE.0) THEN
+      WRITE(0,126) BELL
+      GOTO 9
+      ENDIF
+      CALL ADDERIV(DESIG,KGID,LGID,NLOCN,CDATE,GERM2,0,IER)
+      ENDIF
+      IF(KGID.EQ.0) THEN
+C  IF THE ENTRY IS A NON IR  DERIVATIVE, ADD IT
+      IGID1=0
+      IGID2=0
+C COLLECTION
+      IF(METHOD.EQ.203) THEN
+      IF(CROSS.NE.' ') THEN
+      CALL NAMLST1(2,CROSS,KGID,NAMDAT,GERM1,PNAME,NHITS,ICHNG,NAMS,0)
+      IF(KGID.NE.0) THEN
+      IGID1=GERM1%PROGENITOR_ID1
+      IGID2=KGID
+      ELSE
+      CALL ADDGERM(31,-1,0,0,0,0,0,NREF,6,0,0,NREF,CROSS,GERM1,IWK,IER)
+      IGID2=GERM1%GERMPLASM_ID
+      IGID1=0
+      ENDIF
+      ENDIF
+      ENDIF
+C  MUTATION
+      IF(METHOD.EQ.152) THEN
+      IF(CROSS.NE.' ') THEN
+      CALL NAMLST1(2,CROSS,KGID,NAMDAT,GERM1,PNAME,NHITS,ICHNG,NAMS,0)
+      IF(KGID.NE.0) THEN
+      IGID1=GERM1%PROGENITOR_ID1
+      IGID2=KGID
+      ELSE
+      CALL ADDGERM(31,-1,0,0,0,0,0,NREF,6,0,0,NREF,CROSS,GERM1,IWK,IER)
+      IGID2=GERM1%GERMPLASM_ID
+      IGID1=0
+      ENDIF
+      ENDIF
+      ENDIF
+C
+      IF(IGID.NE.0.AND.METHOD.EQ.31) THEN
+      WRITE(0,129) BELL
+ 129  FORMAT(' *** ERROR *** GERMPLASM EXISTS ALREADY, RE-ENTER',A1)
+      GOTO 9
+      ENDIF
+      CALL ADDGERM(METHOD,-1,IGID1,IGID2,LGID,0,CDATE,NREF,
+     &NTYPE,0,NDATE,NREF,DESIG,GERM,IWK,IER)
+      KGID=GERM%GERMPLASM_ID
+      ENDIF
+C  ADD THE EXTRA NAME IF THERE IS ONE
+      IF(DESIGA.NE.' ') CALL ADDNAME(KGID,NTYPEA,0,
+     & NDATEA,NREF,DESIGA,IER)
+C  ADD THE REPLACE ATTRIBUTE IF THE ENTRY IS ALREADY IN GMS
+      IF(IGID.NE.0) THEN
+      CALL GETDATM(DATE,TIME,IDTE,ITME)
+      WRITE(AVAL,107) TIME,KGID
+ 107  FORMAT(A8,I12)
+      CALL ADDATT(IGID,101,NLOCN,IDTE,NREF,AVAL,IER)
+      ENDIF
+C-------------------------------------------------------
+C  PEDIGREE PROCESSING
+C  4. ADD PEDIGREE FOR NEW OR EXISTING ENTRY
+C-------------------------------------------------------
+      ELSE IF (K.EQ.4) THEN
+      IF(NDC.LE.1) THEN
+      WRITE(0,117) BELL
+ 117  FORMAT(' *** ERROR *** NO PEDIGREE TO ADD - RE-ENTER',A1)
+      GOTO 9
+      ENDIF
+C  IF THE ENTRY TO ADD IS AN IR DERIVATIVE USE ADDERIV.
+      IF(DESIG(1:3).EQ.'IR '.AND.INDEX(DESIG,'/').EQ.0
+     & .AND.INDEX('0123456789',DESIG(4:4)).NE.0) THEN
+C  IF THE ENTRY IS A NON EXISTING IR DERIVATIVE OF AN EXISTING CROSS
+C  THEN ONLY THE DERIVATIVE IS ADDED. IF IT IS AN EXISTING IR DERIVATIVE
+C  THEN AN ERROR MESSAGE IS PRINTED SINCE THIS WOULD REPRESENT AN
+C  UNLIKELY CHANGE
+      IF(IGID.NE.0) THEN
+      WRITE(0,126) BELL
+ 126  FORMAT(' *** ERROR *** CANT CHANGE PEDIGREE OF AN IR LINE',A1)
+      GOTO 9
+      ENDIF
+      CALL ADDERIV(DESIG,KGID,LGID,0,CDATE,GERM,0,IER)
+C  IF THE DERIVATIVE WAS ADDED CORRECTLY SKIP CROSS HISTORY
+      IF(KGID.NE.0) GOTO 10
+      ENDIF
+C  IF THE ENTRY TO ADD IS A DERIVATIVE USE ADDERIV
+      I=INDEX(DESIG,'-')+1
+      J=INDEX(DESIG(I:),'-')
+      IF(DESIG(1:2).NE.'IR'.AND.J.GT.0.AND.I.GT.3
+     & .AND.INDEX(DESIG,'/').EQ.0) THEN
+      WRITE(0,*) 'SEARCH FOR CROSS:'//DESIG(1:I-2)
+      CALL NAMLST1(2,DESIG(1:I-2),KGID,NAMDAT,GERM,PNAME,NHITS,
+     &ICHNG,NAMS,0)
+      IER=KGID
+      IF(KGID.NE.0) CALL ADDERIV(DESIG,KGID,LGID,0,CDATE,GERM,2,IER)
+      IF(KGID.NE.0) GOTO 10
+C  IF ADDERIV FAILED ADD THE CROSS HISTORY OF THE ROOT
+      IF(KGID.EQ.0) THEN
+      TAIL=DESIG
+      DESIG=TAIL(1:I-2)
+      ENDIF
+      ENDIF
+C  WRITE OUT CROSS HISTORY
+      DO 5 I=1,NDC
+      WRITE(0,124) I,PDC(I,1),PDN(I,1),PDC(I,2),PDN(I,2),PDN(I,3)
+ 124  FORMAT(I3,1X,A30,I3,1X,A30,2I3)
+ 5    CONTINUE
+      KGID=IGCR
+      IF(KGID.EQ.0) THEN
+C  ADD CROSS HISTORY LINE BY LINE
+      DO 6 I=NDC,2,-1
+      DO 7 J=2,1,-1
+      AVAL=PDC(I,J)(1:LEN_TRIM(PDC(I,J)))
+      CALL NAMLST1(1,AVAL,JGID,NAMDAT,GERM1,PNAME,NHITS,ICHNG,NAMS,0)
+      IF(JGID.EQ.0) THEN
+C  CURRENT GERMPLASM NOT IN GMS -- ADD IT
+      KGID=0
+      IF(AVAL(1:3).EQ.'IR '.AND.INDEX(AVAL,'/').EQ.0
+     & .AND.INDEX('0123456789',AVAL(4:4)).NE.0) THEN
+        CALL ADDERIV(PDC(I,J),KGID,0,0,NODATE,GERM2,0,IER)
+        PDN(I,J)=KGID
+      ENDIF
+      IF(KGID.EQ.0) THEN
+        IF(PDN(I,J).LE.0) THEN
+        CALL ADDGERM(31,-1,0,0,0,0,0,NREF,6,0,0,NREF,AVAL,GERM,IWK,IER)
+        ELSE
+        CALL ADDGERM(PDN(PDN(I,J),3),2,PDN(PDN(I,J),1),
+     &  PDN(PDN(I,J),2),0,0,0,NREF,6,0,0,NREF,AVAL,GERM,IWK,IER)
+        ENDIF
+      PDN(I,J)=GERM%GERMPLASM_ID
+      ENDIF
+      ELSE
+C  CURRENT GERMPLASM IS IN GMS -- SET GID
+      PDN(I,J)=JGID
+      ENDIF
+      KGID=0
+ 7    CONTINUE
+ 6    CONTINUE
+C  ADD THE IRGD ENTRY IF IT IS NOT AN IR DERIVATIVE
+      IF(KGID.EQ.0) THEN
+      CALL ADDGERM(PDN(2,3),2,PDN(2,1),PDN(2,2),0,0,0,NREF,
+     &  NTYPE,0,0,NREF,CROSS,GERM,IWK,IER)
+      KGID=GERM%GERMPLASM_ID
+      ENDIF
+      ENDIF
+      IF(TAIL.NE.' ') THEN
+      IF(DESIG.NE.' ') CALL ADDNAME(KGID,NTYPE,1,NDATE,1,DESIG,IER)
+      IER=KGID
+      CALL ADDERIV(TAIL,JGID,LGID,0,CDATE,GERM,2,IER)
+      IF(IER.NE.1) THEN
+      PAUSE 'DERIV FAIL'
+      CALL ADDGERM(METHOD,-1,KGID,0,LGID,0,CDATE,NREF,
+     & NTYPE,0,NDATE,NREF,TAIL,GERM,IWK,IER)
+      ENDIF
+      KGID=GERM%GERMPLASM_ID
+      ELSE
+      CALL ADDGERM(METHOD,-1,KGID,0,LGID,0,CDATE,NREF,
+     & NTYPE,0,NDATE,NREF,DESIG,GERM,IWK,IER)
+      KGID=GERM%GERMPLASM_ID
+      ENDIF
+      TAIL=' '
+C  ADD THE EXTRA NAME IF THERE IS ONE
+ 10   IF(DESIGA.NE.' ') CALL ADDNAME(KGID,NTYPEA,1,NDATEA,1,DESIGA,IER)
+C ADD THE REPLACE ATTRIBUTE IF THE ENTRY IS ALREADY IN GMS
+      IF(IGID.NE.0) THEN
+      CALL GETDATM(DATE,TIME,IDTE,ITME)
+      WRITE(AVAL,107) TIME,KGID
+      CALL ADDATT(IGID,101,NLOCN,IDTE,NREF,AVAL,IER)
+      ENDIF
+C-------------------------------------------------------
+C  PEDIGREE PROCESSING
+C  5. SEARCH FOR ALTERNATIVE NAME
+C-------------------------------------------------------
+      ELSEIF (K.EQ.5) THEN
+      READ(1,100) AVAL
+ 100  FORMAT(A)
+      CALL NAMLST1(2,AVAL,IGID,NAMDAT,GERM,PNAME,NHITS,ICHNG,NAMS,0)
+      IF(IGID.NE.0.AND.DESIG.EQ.' ') DESIG=PNAME
+      GOTO 8
+      ENDIF
+      IGID=KGID
+      RETURN
+      END SUBROUTINE ADDCROSS
+C******************************************************* NAMLST1
+C  PURPOSE:
+C  LIST ALL GERMPLASM WITH A GIVEN NAME
+C
+C  NAMLST WILL SEARCH FOR THE NAME, LIST ALL OCCURANCES (UP
+C  TO A MAXIMUM OF 100), LIST ALL NAMES ASSOCIATED WITH
+C  THOSE OCCURANCES. ASK THE USER TO SELECT AN OCCURANCE AND
+C  RETURN THE GID OF THAT SELECTION IN IGID AND THE NAME DATA
+C  FOR THE PREFERRED NAME IN NAMDAT AND THE PREFERRED NAME IN
+C  ANAME
+C
+C  ARGUMENTS:
+C  IOPT   = 0 FOR LISTING ONLY (NO SELECTION)
+C         = 1 TO SELECT A SINGLE MATCH AUTOMATICALLY
+C         = 2 OTHERWISE
+C  DESIG  - STRING CONTAINING THE NAME
+C  IGID   - GID OF SELECTED GERMPLASM OR ZERO FOR NONE
+C  NAMDAT - NAME DATA FOR THE PREFERRED NAME OF THE
+C           SELECTED GERMPLASM
+C  ANAME  - PREFERRED NAME FOR THE SELECTED GERMPLASM
+C  GERM   - GERMPLASM DATA FOR THE SELECTED GERMPLASM
+C  K      - NUMBER OF HITS
+C  ICNG   - VECTOR OF CHANGE INDICATORS FOR EACH HIT
+C  NAMS   - VECTOR OF NAME-DATA FOR EACH HIT
+C  ISRH   - 1 IF THE SEARCH IS FOR AN ACCESSION NO
+C           2 IF THE SEARCH IS FOR A SOURCE WITHOUT ACCESSION NO
+C           3 IF THE SEARCH IS FOR A GENERATIVE GERMPLASM
+C           0 OTHERWISE
+C------------------------------------------------------- NAMLST1
+      SUBROUTINE NAMLST1(IOPT,NAME,IGID,NAMDAT,GERM,ANAME
+     & ,K,ICNG,NAMS,ISRH)
+      USE GMS_STRUCTURES
+      USE GMS_INTERFACE
+      USE GMS_TOOLS      
+      CHARACTER NAME*(*),DESIG*256,ANAME*(*),AVAL*32
+      CHARACTER NULL*1,BELL*1,REPLACE*8,MRK*1,NUMS*11
+      INTEGER*4 FIND_FIRST,FIND_NEXT,IWK(20),ICNG(100)
+      TYPE(GMS_GERMPLASM) GERM
+      TYPE(GMS_NAMEDATA) NAMDAT,NAMS(100),NAMDAT1
+      TYPE(GMS_ATTRIBUTE) ATTB
+      DATA FIND_FIRST,FIND_NEXT,LN,NULL /0,1,32,0/,BELL/7/
+      DATA NUMS /'0123456789%'/
+C  ADD THE NULL CHARACTER TO THE END OF THE NAME FOR C COMPATIBILITY
+      BELL=G_BELL
+      IDASH=0
+      DESIG=NAME
+      J=LEN_TRIM(DESIG)
+      DESIG(J+1:J+1)=NULL
+C  LOOP THROUGH NAME MATCHES AND COUNT OCCURANCES (K)
+C  K    - NUMBER OF HITS
+C  NSRC - HIT NO OF A SINGLE NON REPLACED SOURCE
+C  KNMS - NUMBER OF NON REPLACED, NO REPEAT HITS
+C  LNMS - NUMBER OF THE LAST NON REPLACED NON REPEAT HIT
+      K=0
+      NSRC=0
+      KNMS=0
+      LNMS=0
+ 2    ANAME=' '//NULL
+      NAMDAT%GERMPLASM=0
+      NAMDAT%TYPE=0
+      NAMDAT%STATUS=0
+      NAMDAT%LOCATION=0
+      I4=GMS_findName2(DESIG,NAMDAT,GERM,ANAME,LN,FIND_FIRST)
+      DO WHILE (I4.EQ.1)
+      IF(ISRH.EQ.1.AND.NAMDAT%TYPE.NE.1) GOTO 28
+C  CHECK FOR A REPLACE ATTRIBUTE
+      ATTB%GERMPLASM=NAMDAT%GERMPLASM
+      ATTB%TYPE=101
+      REPLACE=' '
+      AVAL=' '//NULL
+      J=GMS_getAttribute(ATTB,AVAL,LN,FIND_FIRST)
+      IF(J.EQ.1) REPLACE=AVAL(13:20)
+      IF(REPLACE.EQ.'       0') REPLACE='  DELETED'
+C  LOOK FOR DOUBLE HITS
+      MRK=' '
+      DO 27 L=1,K
+      IF(NAMS(L)%GERMPLASM.EQ.NAMDAT%GERMPLASM) MRK='^'
+ 27   CONTINUE
+C CHECK FOR GENERATIVE GERMPLASM
+      IF(ISRH.EQ.3.AND.GERM%NO_PROGENITORS.EQ.-1) GOTO 28
+      IF (ISRH.EQ.2) THEN
+      NAMDAT1%GERMPLASM=GERM%GERMPLASM_ID
+      NAMDAT%TYPE=1
+      NAMDAT%STATUS=0
+      L=GMS_getName(NAMDAT,AVAL,32,0)
+      IF(L.EQ.1) GOTO 28
+      ENDIF
+      K=K+1
+      IF(MRK.NE.'^'.AND.REPLACE.EQ.' ') THEN
+      KNMS=KNMS+1
+      LNMS=K
+      ENDIF
+C  CHECK IF THERE IS EXACTLY ONE SOURCE
+      IF(GERM%NO_PROGENITORS.LT.0.AND.REPLACE.EQ.' ') THEN
+      IF(NSRC.GT.0) NSRC=-1
+      IF(NSRC.EQ.0) NSRC=K
+      ENDIF
+C  WRITE OUT HEADING FOR LIST OF OCCURANCES
+      IF(K.EQ.1) WRITE(0,102) DESIG(1:LEN_TRIM(DESIG))
+ 102  FORMAT(' SEARCH FOR: ',A,T55,
+     &'GID  NTYP METH LOC REP BY')
+C  WRITE OUT THE OCCURANCES
+      WRITE(0,103) K,TRIM(LSTNMS(NAMDAT%GERMPLASM,50)),
+     &NAMDAT%GERMPLASM,MRK,NAMDAT%TYPE,GERM%METHOD,
+     &GERM%LOCATION,REPLACE
+ 103  FORMAT(I2,1X,A,T52,I9,A1,I2,I3,I5,A8)
+C  STORE NAME DATA FOR EACH OCCURANCE
+      NAMS(K)=NAMDAT
+      ICNG(K)=0
+      IF(REPLACE.NE.' ') ICNG(K)=16
+      IF(K.EQ.99) GOTO 10
+ 28   ANAME=' '//NULL
+      I4=GMS_findName2(DESIG,NAMDAT,GERM,ANAME,LN,FIND_NEXT)
+      ENDDO
+C REPLACE -(LETTER) BY SPACE(LETTER)
+      IF(IDASH.EQ.0) THEN
+      IDASH=1
+      J=1
+      I=0
+ 1    I=INDEX(DESIG(J:),'-')+I
+      IF(I.GT.J) THEN
+      J=I+1
+      IF(INDEX(NUMS,DESIG(I+1:I+1)).EQ.0) THEN
+      DESIG(I:I)=' '
+      IDASH=IDASH+1
+      ENDIF
+      GOTO 1
+      ENDIF
+      IF(IDASH.GT.1) GOTO 2
+      ENDIF
+C CHECK FOR NULL LIST
+      IF(KNMS.EQ.0) THEN
+      IGID=0
+      WRITE(0,101) NAME(1:LEN_TRIM(NAME))
+ 101  FORMAT(1X,A,' NOT FOUND IN GMS')
+      RETURN
+      ENDIF
+C  CHECK FOR FULL LIST
+ 10   IF(K.EQ.99) WRITE(0,113)
+ 113  FORMAT(' *** WARNING *** MAXIMUM MATCHES FOUND')
+C  SELECT ENTRY FROM LIST
+      IGID=0
+      IF(IOPT.EQ.0) RETURN
+ 112  FORMAT(' CHOOSE ENTRY (ZERO FOR NONE, BLANK FOR FIRST)',A1)
+      IGID=NSRC
+      IF(IOPT.EQ.1.AND.NSRC.GT.0.AND.ISRH.EQ.2.AND.ICNG(IGID).EQ.0)
+     & GOTO 11
+      IGID=LNMS
+      IF(KNMS.GT.1.OR.IOPT.GT.1.OR.ICNG(IGID).EQ.16.OR.
+     &(NAMS(IGID)%TYPE.EQ.1.and.ISRH.NE.1))      THEN
+      WRITE(0,112) BELL
+      IGID=LINPUT(1,-1,IER,IWK)
+      ENDIF
+      IF(IER.EQ.-1) IGID=1
+      IF(IER.GT.0) GOTO 10
+      IF(IGID.EQ.0.AND.IER.EQ.0) RETURN
+ 11   IF(IGID.LT.0.OR.IGID.GT.K) THEN
+      WRITE(0,114) BELL
+ 114  FORMAT(' *** ERROR *** CHOICE OUT OF RANGE - RE-ENTER',A1)
+      GOTO 10
+      ENDIF
+      IF(ICNG(IGID).EQ.16) THEN
+      WRITE(0,115) BELL
+ 115  FORMAT(' *** ERROR *** CANNOT CHOOSE REPLACED GERMPLASM',
+     &' - RE-ENTER',A1)
+      NSRC=0
+      GOTO 10
+      ENDIF
+      NAMDAT=NAMS(IGID)
+      IGID=NAMDAT%GERMPLASM
+      I4=GMS_getGermplasm2(IGID,GERM,NAMDAT,ANAME,80)
+      IF(I4.NE.1) STOP 10
+      I4=INDEX(ANAME,NULL)
+      ANAME(I4:)=' '
+      RETURN
+      END SUBROUTINE NAMLST1
+      END MODULE GMS_FUNCTIONS     
