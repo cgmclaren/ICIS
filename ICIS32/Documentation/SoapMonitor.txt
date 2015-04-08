@@ -1,0 +1,1 @@
+http://i1ws0112a:8080/axis/SOAPMonitor

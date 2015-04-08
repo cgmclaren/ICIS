@@ -1,0 +1,18 @@
+1-----Starting FetchMaizeList---
+1-----Retrieve record 4 V381-8
+1-----Exiting FetchMaizeList---
+0----CML395/CML444//[Ent52:92SEW1-2/[DMRESR-W]EarlySel-#L-2-1-B/CML386]-B-22-1-B-4-#-1-B/[Ent320:92SEW2-77/[DMRESR-W]EarlySel-#I-2-4-B/CML386]-B-11-3-B-2-#-BB not found in database --- Add CML395/CML444//[Ent52:92SEW1-2/[DMRESR-W]EarlySel-#L-2-1-B/CML386]-B-22-1-B-4-#-1-B/[Ent320:92SEW2-77/[DMRESR-W]EarlySel-#I-2-4-B/CML386]-B-11-3-B-2-#-BB---
+1-----Starting AddParent---
+2------Starting IsExist2---
+2------Exiting IsExist2---
+2------Starting IsDeriv---
+2------Exiting IsDeriv---
+1-----Exiting IsDeriv---
+1-----Starting IsExist2---
+1-----Exiting IsExist2---
+1-----Starting AddParent---
+2------Starting IsExist2---
+2------Exiting IsExist2---
+2------Starting IsDeriv---
+2------Exiting IsDeriv---
+1-----Exiting IsDeriv---

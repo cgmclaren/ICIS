@@ -1,0 +1,345 @@
+LIBRARY ICIS32
+EXPORTS
+
+GEMS_openDatabase 
+GEMS_closeDatabase 
+GEMS_autoCommit
+GEMS_commitData
+GEMS_getGemsMID 
+GEMS_getGemsMVID 
+GEMS_getMaxID
+GEMS_addGEMSName
+GEMS_addMD
+GEMS_addPdComp
+GEMS_getPdComp
+GEMS_addPD
+GEMS_addComponent
+GEMS_addMV
+GEMS_addProp
+GEMS_getProtocolID
+GEMS_findPID
+GEMS_findPropid
+GEMS_findMethod
+GEMS_addMethod
+GEMS_findScale
+GEMS_addScale
+GEMS_findPdid
+GEMS_addLocus
+GEMS_getNameID
+GEMS_getAlleleID
+
+
+DMS_autoCommit
+DMS_commitData
+DMS_rollbackData
+DMS_findStEffect
+DMS_getEffectOunit
+DMS_addEffect
+DMS_addVEffect
+DMS_existEffect
+DMS_executeSQLText
+DMS_executeBindSQLValue
+DMS_extractOunitByLNVal
+DMS_extractOunitByLCVal
+DMS_getEffectRecord
+DMS_getEffectRecordV
+DMS_getEffectCount
+DMS_describeEffectOunit
+DMS_getEffect
+DMS_getFactorEffect
+DMS_getEffectFactor
+DMS_getVariateOfRepres
+DMS_getVEffectRecord
+DMS_existCombinationEffect
+
+DMS_getAllLabelC
+DMS_getAllLabelN
+DMS_getAllLabel
+
+DMS_getFactorLabel
+DMS_getStudy
+DMS_getStudy3
+DMS_getVariate
+DMS_getFactor
+DMS_getSRFactor
+DMS_getSRVariate
+DMS_getDMSAttr
+DMS_getScaleDis
+DMS_getScaleCon
+DMS_getScaleDis2
+DMS_getScaleTab
+DMS_getScaleTab2
+
+DMS_getSFactor
+DMS_getSVariate
+DMS_getSRepres
+DMS_getUFactor
+DMS_getUVariate
+DMS_getUTrait
+
+DMS_updateDataC
+DMS_updateDataN
+DMS_deleteDataN  
+DMS_deleteDataC 
+DMS_minOunit
+
+DMS_closeDatabase    =   _DMS_closeDatabase@0 
+DMS_openDatabase     =   _DMS_openDatabase@4
+
+DMS_addDataC         =   _DMS_addDataC@4
+DMS_addDataN         =   _DMS_addDataN@4
+DMS_addDataC2         =   _DMS_addDataC2@4
+DMS_addDataN2         =   _DMS_addDataN2@4
+DMS_addFactor        =   _DMS_addFactor@4
+DMS_addVariate       =   _DMS_addVariate@4
+DMS_addLevelC        =   _DMS_addLevelC@4
+DMS_addLevelN        =   _DMS_addLevelN@4
+DMS_addLevelC2        =   _DMS_addLevelC2@4
+DMS_addLevelN2        =   _DMS_addLevelN2@4
+
+DMS_addStudy         =   _DMS_addStudy@8
+DMS_addObsUnit       =   _DMS_addObsUnit@4
+DMS_addOindex        =   _DMS_addOindex@4
+DMS_addTrait         =   _DMS_addTrait@8
+DMS_addScale         =   _DMS_addScale@4
+DMS_addTmethod       =   _DMS_addTmethod@8
+DMS_addAttr          =   _DMS_addAttr@8
+
+DMS_defineOunitDC    =   _DMS_defineOunitDC@8
+DMS_defineOunitDN    =   _DMS_defineOunitDN@8
+DMS_defineOunitLC    =   _DMS_defineOunitLC@8
+DMS_defineOunitLN    =   _DMS_defineOunitLN@8
+DMS_describeOunit    =   _DMS_describeOunit@16
+
+    
+DMS_deleteStudy      =  _DMS_deleteStudy@4
+DMS_deleteDataset    =  _DMS_deleteDataset@4
+DMS_deleteDMSATTR    = _DMS_deleteDMSATTR@8
+
+DMS_existCombination =   _DMS_existCombination@16 
+DMS_executeSQLValue
+
+
+DMS_extractOunitLN   =   _DMS_extractOunitLN@24
+DMS_extractOunitDN   =   _DMS_extractOunitDN@24
+DMS_extractOunitLC   =   _DMS_extractOunitLC@16
+DMS_extractOunitDC   =   _DMS_extractOunitDC@16
+
+DMS_findStudy        =   _DMS_findStudy@12
+DMS_findStudyOnly    =   _DMS_findStudyOnly@12
+DMS_findFactor       =   _DMS_findFactor@12
+DMS_findFactorDistinct       =   _DMS_findFactorDistinct@12
+DMS_findVariate      =   _DMS_findVariate@12
+DMS_findTrait        =   _DMS_findTrait@12
+DMS_findScale        
+DMS_findLevelC       =   _DMS_findLevelC@4
+DMS_findLabelC       =   _DMS_findLabelC@4
+DMS_findLevelN       =   _DMS_findLevelN@4
+DMS_findLabelN       =   _DMS_findLabelN@4
+DMS_findStOunit      =   _DMS_findStOunit@8
+DMS_findLFLevel = _DMS_findLFLevel@4 
+DMS_findPFLevel = _DMS_findPFLevel@4
+
+DMS_getTrait         =   _DMS_getTrait@16
+DMS_getTmethod       =   _DMS_getTmethod@16
+DMS_getTmethod2      =   _DMS_getTmethod2@16
+DMS_getScale         =   _DMS_getScale@8
+DMS_getScale2        =   _DMS_getScale2@8
+DMS_getLevelC        =   _DMS_getLevelC@4
+DMS_getLevelN        =   _DMS_getLevelN@4
+DMS_getDataC         =   _DMS_getDataC@4
+DMS_getDataN         =   _DMS_getDataN@4
+DMS_getAllLevelN     =   _DMS_getAllLevelN@8
+DMS_getAllLevelC     =   _DMS_getAllLevelC@8
+DMS_getDataNOfFactorN
+DMS_getDataCOfFactorN
+DMS_getOunitData
+DMS_getConsData
+DMS_getCondLevel
+
+DMS_getLabelN        =   _DMS_getLabelN@8
+DMS_getLabelC        =   _DMS_getLabelC@8
+DMS_getOunitLevelC   =   _DMS_getOunitLevelC@12
+DMS_getOunitLevelN   =   _DMS_getOunitLevelN@12
+DMS_getOunitDataC    =   _DMS_getOunitDataC@8
+DMS_getOIndex        =   _DMS_getOIndex@12
+DMS_getOunitLevel
+DMS_getOunitData
+DMS_getRepresName
+
+DMS_searchDataNOfOunit = _DMS_searchDataNOfOunit@4
+DMS_searchDataCOfOunit = _DMS_searchDataCOfOunit@4
+DMS_searchLevelNOfOunit = _DMS_searchLevelNOfOunit@4
+DMS_searchLevelCOfOunit = _DMS_searchLevelCOfOunit@4
+
+DMS_searchDataC      =   _DMS_searchDataC@28
+DMS_searchLevelC     =   _DMS_searchLevelC@28
+DMS_searchDataN      =   _DMS_searchDataN@24
+DMS_searchLevelN      =   _DMS_searchLevelN@24
+
+DMS_setStudy = _DMS_setStudy@8
+DMS_setStudyStatParent = _DMS_setStudyStatParent@12
+DMS_setRepresName
+DMS_setEffectName
+
+RetrieveDes
+RetrieveCol
+
+SUP_addPerson
+SUP_addInstitute
+SUP_getPerson
+SUP_getPersonInst
+SUP_getInstitutePrnt
+
+UI_getUIField
+UI_getUIHeader
+UI_getUserInterface
+
+GMS_encryptPWD = _GMS_encryptPWD@8
+GMS_getNameRecord  = _GMS_getNameRecord@12
+GMS_getSoundEx = _GMS_getSoundEx@12
+
+GMS_addAttribute =                  _GMS_addAttribute@8
+GMS_addBibrefs  =                  _GMS_addBibrefs@4
+GMS_addChanges =                  _GMS_addChanges@8
+GMS_addGermplasm =                  _GMS_addGermplasm@16
+GMS_addListData =                  _GMS_addListData@4
+GMS_addListText =                  _GMS_addListText@4
+GMS_addListName =                  _GMS_addListName@4
+GMS_addLocation =                  _GMS_addLocation@4
+GMS_addName =                  _GMS_addName@12
+GMS_addProgenitorID =                  _GMS_addProgenitorID@12
+GMS_addUser         =         _GMS_addUser@12
+GMS_addUDField  = _GMS_addUDField@12
+GMS_autoCommit =                  _GMS_autoCommit@4
+GMS_closeDatabase =                  _GMS_closeDatabase@0
+GMS_commitData =                  _GMS_commitData@0
+GMS_computeGenerationNo =         _GMS_computeGenerationNo@28        
+GMS_countListEntry =      _GMS_countListEntry@4 
+GMS_crossExpansion =                  _GMS_crossExpansion@28
+GMS_date =                  _GMS_date@12
+GMS_dateToStr =                  _GMS_dateToStr@8
+GMS_deleteChanges =                  _GMS_deleteChanges@4
+GMS_deleteGermplasm =                  _GMS_deleteGermplasm@4
+
+GMS_deleteListData	=	_GMS_deleteListData@8
+GMS_deleteListName	=	_GMS_deleteListName@4
+GMS_deleteProgenitorID	=	_GMS_deleteProgenitorID@4
+GMS_deleteOneProgenitor	=	_GMS_deleteOneProgenitor@8
+
+GMS_expandDate	=	_GMS_expandDate@16
+GMS_executeSQLValue
+
+GMS_findAttribute	=	_GMS_findAttribute@16
+GMS_findChanges	=	_GMS_findChanges@16
+GMS_findChanges2 =  _GMS_findChanges2@16
+GMS_findDescendant	=	_GMS_findDescendant@16
+GMS_findGermplasm	=	_GMS_findGermplasm@8
+GMS_findLocation	=	_GMS_findLocation@8
+GMS_findName2	=	_GMS_findName2@24
+GMS_findName3	=	_GMS_findName3@24
+GMS_findName	=	_GMS_findName@24
+GMS_findListName  = _GMS_findListName@12
+GMS_findListData  = _GMS_findListData@8
+GMS_findUDField
+GMS_findCIDSID  = _GMS_findCIDSID@16
+GMS_findUniqueID = _GMS_findUniqueID@12
+
+GMS_generateCrossName	=	_GMS_generateCrossName@20
+GMS_generateTree	=	_GMS_generateTree@24
+GMS_getAttribute	=	_GMS_getAttribute@16
+GMS_getBibrefs    =  _GMS_getBibrefs@8
+GMS_getChanges	=	_GMS_getChanges@16
+GMS_getCurrentInstln
+GMS_getDate	=	_GMS_getDate@0
+GMS_getDerivativeNeighbor = _GMS_getDerivativeNeighbor@24
+GMS_getDerivativeNeighbor2
+GMS_getDerivativeNbh = _GMS_getDerivativeNeighbor@24
+GMS_getDMSStatus = _GMS_getDMSStatus@4
+GMS_getGermplasm2	=	_GMS_getGermplasm2@20
+GMS_getGermplasm3	=	_GMS_getGermplasm3@20
+GMS_getGermplasm	=	_GMS_getGermplasm@8
+GMS_getGermplasmRecord	=	_GMS_getGermplasmRecord@8
+GMS_getInstallation	=	_GMS_getInstallation@12
+GMS_getInstallationEx	=	_GMS_getInstallationEx@16
+GMS_getListData	=	_GMS_getListData@8
+GMS_getListData2	=	_GMS_getListData2@8
+GMS_getListDataByDesig	=	_GMS_getListDataByDesig@8
+GMS_getListName	=	_GMS_getListName@8
+GMS_getListByStatus	=	_GMS_getListByStatus@8
+GMS_getLocation2	=	_GMS_getLocation2@8
+GMS_getLocation	=	_GMS_getLocation@8
+GMS_getLocation3	=	_GMS_getLocation3@8
+GMS_getMgmntNeighbor = _GMS_getMgmntNeighbor@24
+GMS_getMaxEntryID  = _GMS_getMaxEntryID@4
+GMS_getMethod	=	_GMS_getMethod@16
+GMS_getName	=	_GMS_getName@16
+GMS_getNextSequence = _GMS_getNextSequence@12
+GMS_getNextName = _GMS_getNextName@12
+GMS_getProgenitorID	=	_GMS_getProgenitorID@12
+GMS_getTime	=	_GMS_getTime@0
+GMS_getUDField	=	_GMS_getUDField@16
+GMS_getUDField2	=	_GMS_getUDField2@16
+GMS_getUser	=	_GMS_getUser@8
+GMS_hasCIDSID = _GMS_hasCIDSID@0
+GMS_listNames	=	_GMS_listNames@12
+GMS_listNamesEx	=	_GMS_listNamesEx@16
+GMS_openDatabase2	=	_GMS_openDatabase2@16
+GMS_openDatabase	=	_GMS_openDatabase@4
+GMS_rollbackData	=	_GMS_rollbackData@0
+GMS_setBibrefs = _GMS_setBibrefs@4
+GMS_setDMSStatus = _GMS_setDMSStatus@4
+GMS_setGermplasm	=	_GMS_setGermplasm@4
+GMS_setListData	=	_GMS_setListData@4
+GMS_setListName	=	_GMS_setListName@4
+GMS_setPreferredAbbr	=	_GMS_setPreferredAbbr@8
+GMS_setPreferredName	=	_GMS_setPreferredName@8
+GMS_setProgenitorID	=	_GMS_setProgenitorID@12
+GMS_setName    = _GMS_setName@12
+GMS_setAttribute =                  _GMS_setAttribute@8
+GMS_standardName	=	_GMS_standardName@12
+GMS_strToDate	=	_GMS_strToDate@4
+GMS_treeBuild	=	_GMS_treeBuild@8
+GMS_treeDescendant	=	_GMS_treeDescendant@8
+GMS_treeProgenitor	=	_GMS_treeProgenitor@12
+GMS_validDate	=	_GMS_validDate@12
+
+IMS_openDatabase = _IMS_openDatabase@4
+IMS_closeDatabase = _IMS_closeDatabase@0
+IMS_autoCommit = _IMS_autoCommit@4
+IMS_commitData = _IMS_commitData@0
+IMS_rollbackData	=	_IMS_rollbackData@0
+
+IMS_addLot = _IMS_addLot@4
+IMS_addTransaction = _IMS_addTransaction@4
+IMS_countLot = _IMS_countLot@12
+IMS_findTransactionRecord = _IMS_findTransactionRecord@12
+IMS_findLotRecord = _IMS_findLotRecord@8
+
+IMS_getLocation3
+IMS_getTransactionDeposit  =  _IMS_getTransactionDeposit@16
+IMS_getTransactionReserve  =  _IMS_getTransactionReserve@16
+IMS_getDepositByPerson  =  _IMS_getDepositByPerson@12
+IMS_getReserveByPerson  =  _IMS_getReserveByPerson@12
+
+
+IMS_setLot = _IMS_setLot@4
+IMS_setTransaction = _IMS_setTransaction@4
+IMS_closeLot = _IMS_closeLot@4
+IMS_calculateBalance = _IMS_calculateBalance@12
+
+IMS_reportLotByEntity = _IMS_reportLotByEntity@28
+IMS_reportAllTransaction = _IMS_reportAllTransaction@28
+IMS_reportBalance = _IMS_reportBalance@20
+IMS_getBalanceOfLot = _IMS_getBalanceOfLot@8
+IMS_reportLotByEntityGID = _IMS_reportLotByEntityGID@28
+IMS_reportLotByEntityGIDFrom = _IMS_reportLotByEntityGIDFrom@28 
+IMS_reportLotByEntityGIDRange = _IMS_reportLotByEntityGIDRange@36
+IMS_reportEmptyShelves = _IMS_reportEmptyShelves@20
+IMS_reportMaterialsDist = _IMS_reportMaterialsDist@32
+IMS_reportDormantEntries = _IMS_reportDormantEntries@32
+IMS_reportMinimumAmount = _IMS_reportMinimumAmount@32
+IMS_reportByRequestor = _IMS_reportByRequestor@40
+
+IMS_geLabelOtherInfo
+IMS_geLabelInfo 

@@ -1,0 +1,11 @@
+http://localhost:8080/axis/services/GmsWs?wsdl
+http://www.iris.irri.org/axis/services/GmsWs?wsdl
+
+
+Localhost
+The ICIS5 classes is located in 
+C:\apachefriends\xampp\tomcat\webapps\axis\WEB-INF\classes\org\cgiar\icis
+
+
+The icis.config.xml can be found in
+C:\apachefriends\xampp\tomcat\webapps\axis\WEB-INF\classes

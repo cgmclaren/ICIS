@@ -1,0 +1,4 @@
+GEMS_openDatabase = _GEMS_openDatabase@4
+GEMS_closeDatabase = _GEMS_closeDatabase@0
+GEMS_getGemsMID = _GEMS_getGemsMID@8
+GEMS_getGemsMVID = _GEMS_getGemsMVID@8

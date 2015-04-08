@@ -1,0 +1,698 @@
+ICIS32 DLL Changes.txt
+
+*******************************************************************
+ICIS32 5.5.1.7
+********************************************************************
+1. lists.cpp
+addListData2 - modified where the length of bound input parameter is set to 254
+
+
+*******************************************************************
+ICIS32 5.5.1.6
+********************************************************************
+1. crossExpansion - modified for the error reported in cropForge
+2. DMS_executeBindSQLValue -> executeScaleTab3 - modified to initialize the  string to handle the output
+
+
+*******************************************************************
+ICIS32 5.5.1.5
+********************************************************************
+1. crossExpnasion - modified to show a certain name type in the pedigree or cross Expansion, whether that name type is in the cross or within the selection history
+2. GE_openDatabase1, GE_openDatabase2, GE_openDatabase3 - the assigning of DEBUG variable was taken out as it is already done in GMS & DMS opendatabase functions
+
+
+*******************************************************************
+ICIS32 5.5.1.4
+********************************************************************
+1. findDerivative - modified because previously if there are not records in the Methods table, nothing is returned from the local database
+
+*******************************************************************
+ICIS32 5.5.1.3
+********************************************************************
+1. GMS_setBibrefs - new function to update a BIBREFS record of a certain REFID
+2. applyGermplasmChanges - retrieves changes only when GID >=0
+3. addListData2 - if EntryID =0, assign to it the next maximum entryID
+
+
+*******************************************************************
+ICIS32 5.5.1.2
+********************************************************************
+1. getNextTransID - modified to globally assign the transaction ID
+2. DMS_executeSQLText uses the exclamation point as delimiter
+
+*******************************************************************
+ICIS32 5.5.1.1
+********************************************************************
+1. crossExp - modified to return the GPID1 as cross expansion even if its GNPGS<0
+2. Implemented DMS_executeBindSQLValue to correct the error about open cursor in the function being called by the Fill With Customized Data tool
+
+
+
+*******************************************************************
+ICIS32 5.5.1.0
+********************************************************************
+Recompiled for official release
+
+
+*******************************************************************
+ICIS32 5.5.0.18
+********************************************************************
+1. DMS_getStudy3 - retrieves only the studies and does not include folders.
+   DMS_findStudyOnly - retrieves only the studies and does not include folders.
+2. GMS_countListEntry - include central list in the count
+3. GMS_findStudyOnly - retrieves only the study with the specified string.
+4. getOunitData - conversion function for Oracle changed
+
+   "SELECT V.REPRESNO, D.OUNITID, V.VARIATID, trim(to_char(D.DVALUE,'999999999.99999')) \
+		FROM VEFFECT V, DATA_N D\
+		WHERE (((V.VARIATID)=D.VARIATID) \
+		AND ((V.REPRESNO)=?) AND ((D.OUNITID)=?)) \
+		UNION \
+		SELECT V.REPRESNO, D.OUNITID, V.VARIATID, D.DVALUE \
+		FROM VEFFECT V, DATA_C D \
+		WHERE (((V.VARIATID)=D.VARIATID) \
+		AND ((V.REPRESNO)=?) AND ((D.OUNITID)=?)) \
+		ORDER BY VARIATID DESC"	
+
+
+
+*******************************************************************
+ICIS32 5.5.0.17
+********************************************************************
+1. Corrected the assignment of LRECID when the minimum is 0. 
+2. Workbook functions RetrieveDes, RetrieveCol are added
+3. ExecuteScaleTab - free the statement handler after each function call.
+
+*******************************************************************
+ICIS32 5.5.0.16
+********************************************************************
+1. LISTDESC increased to 255
+2. DMS_deleteDataset modified to delete the corresponding record from REPRESTN table
+3. DMS_getRepresName is corrected to retrieve from Central database too
+
+*******************************************************************
+ICIS32 5.5.0.15
+********************************************************************
+1. DMS_executeSQLText function was modified.
+
+
+*******************************************************************
+ICIS32 5.5.0.14
+********************************************************************
+1. Merged the changes from version 5.4.2.1 in getOunitData, getConsData, findPFLevel functions for the SQL used in mySQL/Postgres
+2. New functions 
+GMS_deleteProgenitorID -function to delete a progenitor of a germplasm
+GMS_getPreferredName - function to get the preferred name, if not existing, preferred ID is returned
+GMS_getNextSequence - function to get the next numeric sequece of a name type with the given prefix
+3. Corrected StandardName function for case  L-N -> L^N 
+4. GMS_getNextSequence - corresponding SQL for mySQL and Postgres are included
+
+
+*******************************************************************
+ICIS32 5.5.0.13
+********************************************************************
+1. length of LISTDESC increased, 255 in the database while 256 in the declaration in the program
+2. Additional functions: 
+LONG DMS_setEffectName(LONG id, char *name)
+LONG DMS_setRepresName(LONG id, char *name)
+
+
+*******************************************************************
+ICIS32 5.5.0.12
+********************************************************************
+1. DMS_executeSQL will execute an SQL statement and store the result in a text file. The tables involved in the SQL should be in the DMS database.
+2. getNextLRECID - modified to assign the LRECID globally; it is now decremented or negative.
+3. GMS_addListData - if autocommit is set in SetGen, it commits the data.
+4. findStudyEq, findStudyLike, getStudy - SSTATUS<>9 is added in the WHERE clause
+
+
+
+*******************************************************************
+ICIS32 5.5.0.11
+********************************************************************
+1.  addEffect is modified to call addEffectOfStudy instead of getNextEffectID and addRepresDefn
+
+2. DMS_deleteStudy - modified to delete the records of the additional tables.
+
+
+
+
+*******************************************************************
+ICIS32 5.5.0.10
+********************************************************************
+1. Repeatedly try to add if the return value = -12 with studyid as primary id of the table
+addStudy
+addFactor
+addVariate
+
+2. always execute the SQL to get the next ID
+getNextLabelID  
+getNextVariateID
+
+3. Delaration modified
+typedef struct {
+	LONG OUNITID;
+	LONG EFFECTID;
+}   DMS_OBSUNIT;
+
+
+typedef struct {
+	LONG LEVELNO;
+    	LONG FACTORID; 
+}   DMS_LEVEL;
+
+
+4.  The ff functions are modified in terms of getting the next ID 
+LONG getNextOunitID(BOOL fLocal) - get the next ounitid from OBSUNIT table
+LONG getNextLevelNo(void) - get the next levelno from LEVELS table
+LONG getNextEffectID(LONG studyid)  - get the next effecid from EFFECT
+LONG getNextRepresNo(void) - get the next represno from REPRESTN table
+
+6. Functions added
+-addLevelNo
+addObsUnit
+LONG addEffectOfStudy(long *effectid, long studyid)
+LONG addReprestn(long *represno, long effectid)
+
+
+7. Functions modified to call addLevelNo replacing the call to getNextLevelNo 
+-addLevel
+-addLevelN
+
+8.  addEffectRecord function is renamed to addRepresDefn
+
+
+
+
+
+*******************************************************************
+ICIS32 5.5.0.9
+********************************************************************
+April 4, 2008
+1. ICIS32 DllMain function modified to read if there is SHOW_PREFID key
+2. GMS_getGermplasm2 - modified to include the Preferred ID (NSTAT=8) if SHOW_PREFID=YES
+
+*******************************************************************
+ICIS32 5.5.0.8
+********************************************************************
+mar 28, 2008
+1. DMS_deleteDataset function is added to delete a dataset of a study. A dataset corresponds to a representation number
+
+*******************************************************************
+ICIS32 5.5.0.7
+********************************************************************
+mar 25, 2008
+1. findCiDSID, getCIDSID, findSID- the condition GRPLCE = 0 is added in the SQL statements
+
+
+******************************************************************* 
+ICIS32 5.5.0.6
+********************************************************************
+Feb 22, 2008
+findDerivative - SQL is modified; square bracket is removed because it doesn't work in Oracle.
+
+Feb 19, 2008
+1. GMS_findAttribute is modified to recognize wild card characters
+2. GMS_listName is modified to recognize the Preferred ID (NSTAT-8); If there is no preferred Name, it will search for Preferred ID. If either or both do not exist, it will return GMS_NO_DATA.
+2. GMS_getGermplasm2 is modified to recognize the Preferred ID (NSTAT-8); If there is no preferred Name, it will return the Preferred ID as name. 
+
+
+******************************************************************* 
+ICIS32 5.5.0.5 
+********************************************************************
+Feb 11, 2008
+1. The ff. modules is modified. The szScale contains the scaleID instead of the name because the scale can be stored in the central database. Linking SCALE with local IMS tables might return no record. 
+LONG  IMS_reportMinimumAmount( double minQty, LONG *lotid, LONG *eid, double *quantity, CHAR *szLocname, CHAR *szScale, long fSearchOption ) - t
+
+2. setSessionID  is called before checking the USER and INSTLN records. 
+
+3. LONG DLL_INTERFACE GMS_hasCIDSID(void) - to determine the presence or absence of SID and CID fields.
+
+
+
+******************************************************************* 
+ICIS32 5.5.0.4
+********************************************************************
+1. The following function is added. The steps of the derivative is returned in the array of integer (levelList)
+LONG GMS_getDerivativeNeighbor2(LONG gid, LONG lngMStep,LONG lngNStep,LONG *idList, LONG *levelList, LONG *idLstSz, LONG blnDH) is added
+
+2. setSessionID_DMS is called in DMS_openDatabase if there is SessionID Ini key
+
+
+
+******************************************************************* 
+ICIS32 5.5.0.3
+********************************************************************
+1. DMS_STUDY data structure: the ff fields are added
+LONG SSTATUS;
+LONG SHIERARCHY;
+The corresponding SQL to alter the table is:
+Alter table study add SSTATUS LONG, SHIERARCHY LONG
+
+
+2. The ff. functions were modified for the changes in the STUDY
+ structure
+setStudy;
+addStudy;
+findStudy;
+findStudyEqual;
+findStudyLike;
+getStudy
+getStudy2
+
+3. getStudy is modified and SHIERARCHY is one of the parameters
+
+4. setSessionID is created to run a stored procedure Set_ICIS_Sec_Info(?) in Oracle. There should be a SESSION_ID key in the [DLL SETTINGS] section of the INI file.
+
+5. DirectStmt:ExecuteProc (CODBC.cpp) was added to call user defined procedure
+
+6. Both GMS_openDatabase2 and DMS_openDatabase calls the setSessionID functions
+
+
+
+
+******************************************************************* 
+ICIS32 5.5.0.2
+********************************************************************
+1. getConsData - SQL was modified for MySQL compatibility
+
+
+******************************************************************* 
+ICIS32 5.5.0.1
+********************************************************************
+1. Debug option is now declared in the DEBUG key of [DLL Settings] section of ICIS.INI
+   DEBUG=NO to turn off the debug mode
+2. findName function - special handling for Oracle in binding the search string 
+   (uses the length 255)
+3. addGermplasm - commit data if AUTOCOMMIT=YES in SetGen 
+4. CODBCbindedStmt::Execute() of CODBC.cpp - modified to trap the SQLSTATE=23000 
+   This is the state when unique constraint is violated. 
+5. ODBCError function of ODBCTools - modified to inhibit the error message to appear on screen 
+   when SQLSTATE = 23000
+6. Modified the ff to execute the SQL for each call
+getNextLevelnoC
+getNextLevelNoN
+7. The ff functions are modified to repeatedly try to add if the return value = -12 
+   This is return code for SQLSTATE=23000 
+addGermplasmRecord
+addName
+addChanges
+addAttribute
+addListName2
+addBibrefs
+addLocation
+addUDField
+
+
+
+*******************************************************************
+ICIS32 5.4.2.1
+********************************************************************
+1. The following functions were modified to execute SQL for each call
+getNextNID
+getNextCID
+getNextAID
+getNextRefID
+getNextLID
+getNextLocID
+getNextStudyID
+getNextLabelID
+getNextVariateID
+getNextOunitID
+getNextEffectID
+2. IMS_findLotRecord is modified when input is LOTID
+3. GMS_crossExpansion is modified to trap cyclic data or when backcross dosage exceeds 100
+
+
+*******************************************************************
+ICIS32 5.4.2.0
+********************************************************************
+Recompiled for release
+getNextGID - execute SQL everytime a new GID is needed
+
+*******************************************************************
+ICIS32 5.4.1.5
+********************************************************************
+Modifictional
+1. findName2 modified to get the replacement GID or deletion from GERMPLSM table if local GID.
+2. applyGermplasmChanges in the function GMS_getGermplasmRecord if GID > 0
+
+New Function
+3. SUP_addInstitute - add record in the INSTITUT table
+
+
+
+*******************************************************************
+ICIS32 5.4.1.4
+********************************************************************
+Modification
+1. findTraitEq - DMS_SUCCESS is returned after successful fetch.
+
+New function
+2. GMS_addUDfield is implemented. The function adds a record in the UDFIELD table
+
+*******************************************************************
+ICIS32 5.4.1.3
+********************************************************************
+1. GMS_addListName - now returns the listid if the List exists.
+2  GMS_existList - re-initialize the variable for the list name to correct the error that still adds name even it is existing.  The error occurs  if the length of the pervious search name is longer than the current list name being searched
+
+*******************************************************************
+ICIS32 5.4.1.2
+********************************************************************
+1. Corrected the bugs in findName2 when the previous search string greatly differ in lenght with the next string.  Parameters are now bind with the actual lenght of the string
+2. Rebind the statement in getInstallation if GMS database has been closed within the same DLL process. This is for the Launcher which will now show the database version, hence there will be frequent change of the database to use and call to GMS_getInstallation.  The statement and handler should then be reassigned after each change of database.
+3. findGermplasm - rebinding of GID.
+
+*******************************************************************
+ICIS32 5.4.1.1
+********************************************************************
+1. Corrected the bugs for GMS_setName as reported in Cropforge #493
+
+
+*******************************************************************
+ICIS32 5.4.1.0
+********************************************************************
+The official release for the ICIS 5.4.1
+
+
+*******************************************************************
+ICIS32 5.4.0.4
+********************************************************************
+1. Corrected the bugs related with the GEMS functions
+2. Implemented the GMS_findAttribute
+3. Change field being accessed by the getScaletab. SQL field is renamed to SSQL
+
+
+*******************************************************************
+ICIS32 5.4.0.3
+********************************************************************
+
+
+May 10, 2007
+1. Modified findName2 - explicitly specify 255 as the length of the NVAL in Bindparam
+Application only to 5.4 version and should not be carried out to 5.3 version
+2. All functions that involve the NAMES table - explicitly specify 22 as length of NVAL
+
+*******************************************************************
+ICIS32 5.4.0.2
+********************************************************************
+
+May 8, 2007
+1. Change the size of the ff
+	GMS_LISTDATA_DESIG        256        // 255 is used in the database
+	GMS_LISTDATA_GRPNM        256        // 255 is used in the databa
+2. New IMS functions
+    IMS_geLabelOtherInfo(IMS_LABEL_OTHERINFO *data, long fSearchOption ); 
+    IMS_geLabelInfo(IMS_LABELINFO *data, long fSearchOption );
+
+
+
+April 25, 2007
+1. Increased GMS_NVAL_SIZE         256        // 255 is used 
+2. Increased GMS_FCODE_SIZE	      52      // 50 is used 
+3. Implemented GEMS functions
+    GEMS_getGemsMID(GEMS_INFO *data, int fOpt); 
+    GEMS_getGemsMVID(GEMS_INFO *data, int fOpt); 
+    GEMS_getMaxID(CHAR *szTblName, CHAR *szFieldName); 
+    GEMS_addGEMSName(GEMS_NAME *recName); 
+    GEMS_addMD(GEMS_MARKER_DETECTOR *recTblMD ); 
+    GEMS_getPdComp(PD_COMP_INFO *pdCompInfo, LONG fopt); 
+    GEMS_addPdComp(GEMS_PD_COMP *recTblPdComp ); 
+    GEMS_getProtocolID(GEMS_INFO *recProcInfo , LONG fopt); 
+    GEMS_findPID(PROP_INFO *PropInfo) ; 
+    GEMS_findPropid(GEMS_PROP *recTblProp); 
+    GEMS_findMethod( GEMS_METHOD *recTblMethod); 
+    GEMS_addMethod(GEMS_METHOD *tblMethod) ; 
+    GEMS_findScale(GEMS_SCALE *tblScale); 
+    GEMS_addScale(GEMS_SCALE *tblScale) ; 
+    GEMS_findPdid(GEMS_PD *tblPd); 
+    GEMS_addLocus(GEMS_LOCUS *tblLocus); 
+    GEMS_getNameID(GEMS_INFO *data); 
+    GEMS_getAlleleID( GEMS_INFO *recNameInfo, LONG fopt) ; 
+
+
+
+
+April 10, 2007
+New Function: 
+1. GMS_getDerivativeNeighbor 
+2. GMS_findDerivative
+
+
+October 3, 2006
+1. GEMS.cpp: The ff functions are modified to implement access to central databases only
+- GEMS_openDatabase(LPCSTR szIniFile);
+- GEMS_closeDatabase(void);
+- GEMS_getGemsMID(GEMS_INFO *data, int fOpt);
+- GEMS_getGemsMVID(GEMS_INFO *data, int fOpt);
+2. ICIS32.h: declared constants for the GEMS data structures
+
+Sept 26, 2006
+1. GEMS_INFO - the length of the marker and table names are increased
+
+
+August 30, 2006
+1. deleteDMSNull - null record of Trait, Scale and TMETHOD tables were included
+2. GetounitLevel - take out the initial binding of statement to GETOUNITLEVEL2
+
+August 28, 2006
+GMS_opendatabase2 - allow entry if database is Postgres and has Invalid DB structure return value
+
+
+August 23, 2006
+GMS_getMgmntNeighbor (germplsm.cpp,icis32.h,icis32.def) - Retrieves the management neighbors of the given management group germplasm
+
+
+August 17, 2006
+1. DMS_STUDY  data structure changed with SNAME's length increased to 50 and USERID added
+Functions affected:
+a.  addStudy 
+b.  findStudy
+c.  findStudyEq
+d.  findStudyLike
+e.  getStudy
+f.  setStudy - userid and SNAME are added as fields to update
+
+
+********************************************************************
+ICIS32 5.4.0.2
+********************************************************************
+June 16, 2006
+1. GEMS.cpp and GEMS.h files are added to contain the GEMS functions
+GEMS_openDatabase = opens the GEMS database (central & local)
+GEMS_closeDatabase = closes the GEMS database
+GEMS_getGemsMID = Retrieves the MID given the marker name and object type
+GEMS_getGemsMVID = retrieve the MVID given based on the allele name, object type, & marker ID
+
+
+*****************************************
+ICIS32 5.3.0.8
+*****************************************
+Jan 25, 2007
+addListName - return the record from the database if the listname exisits
+
+
+*****************************************
+ICIS32 5.4.0.2
+*****************************************
+Jan 24, 2007
+getCondLevel- took out the opening and closing parenthesis on the second Select statement of the UNION statement(for mySQL)
+getConstData - took out the opening and closing parenthesis on the second Select statement of the UNION statement(for mySQL)
+getOunitLevel - took out initial binding of SQL statement
+
+
+*****************************************
+ICIS32 5.3.0.7
+*****************************************
+December  2006
+findGermplasm - modified for fcr error in GMS Browse
+
+
+*****************************************
+ICIS32 5.3.0.6
+*****************************************
+November 30,  2006
+findGermplasm - corrected the bug for wrong field name used for MGID
+
+*******************************************************************
+ICIS32 5.4.0.2
+********************************************************************
+October 3, 2006
+1. GEMS.cpp: The ff functions are modified to implement access to central databases only
+- GEMS_openDatabase(LPCSTR szIniFile);
+- GEMS_closeDatabase(void);
+- GEMS_getGemsMID(GEMS_INFO *data, int fOpt);
+- GEMS_getGemsMVID(GEMS_INFO *data, int fOpt);
+2. ICIS32.h: declared constants for the GEMS data structures
+
+
+Sept 26, 2006
+1. GEMS_INFO - the length of the marker and table names are increased
+
+August 30, 2006
+1. deleteDMSNull - null record of Trait, Scale and TMETHOD tables were included
+2. GetounitLevel - take out the initial binding of statement to GETOUNITLEVEL2
+
+August 28, 2006
+GMS_opendatabase2 - allow entry if database is Postgres and has Invalid DB structure return value
+
+
+August 23, 2006
+GMS_getMgmntNeighbor (germplsm.cpp,icis32.h,icis32.def) - Retrieves the management neighbors of the given management group germplasm
+
+
+August 17, 2006
+1. DMS_STUDY  data structure changed with SNAME's length increased to 50 and USERID added
+Functions affected:
+a.  addStudy 
+b.  findStudy
+c.  findStudyEq
+d.  findStudyLike
+e.  getStudy
+f.  setStudy - userid and SNAME are added as fields to update
+
+
+********************************************************************
+ICIS32 5.4.0.1
+********************************************************************
+June 16, 2006
+1. GEMS.cpp and GEMS.h files are added to contain the GEMS functions
+GEMS_openDatabase = opens the GEMS database (central & local)
+GEMS_closeDatabase = closes the GEMS database
+GEMS_getGemsMID = Retrieves the MID given the marker name and object type
+GEMS_getGemsMVID = retrieve the MVID given based on the allele name, object type, & marker ID
+
+
+*****************************************
+ICIS32 5.3.0.6
+*****************************************
+November 30,  2006
+findGermplasm - corrected the bug for wrong field name used for MGID
+
+
+*****************************************
+ICIS32 5.3.0.5
+*****************************************
+August 8, 2006
+deleteIMSNull - delete records with 0 and null values when the database is MySQL. This is the result of preparing the statement in MySQL
+
+
+
+*****************************************
+ICIS32 5.3.0.4
+*****************************************
+July 12, 2006
+addName - took out the binding to central database
+
+July 6, 2006
+*****************
+G_openDatabase2 - if the user has access type of 20, then the GUEST account is assigned to him.
+
+
+*****************************************
+ICIS32 5.3.0.3
+*****************************************
+
+June 6, 2006
+*****************
+1. reportMinimumAmount- corrected to return and consider the the total balance
+2. reportDormantEntries - considered only those lots with balance and took into account the minimum year a transaction was made in that lot as basis for the date
+
+
+
+*****************************************************************************************
+ICIS32 5.3.0.2
+*****************************************************************************************
+
+Mar 24, 2006
+*****************
+1. DMS_setStudy - updates the STUDY record based on the given Studyid
+
+
+*****************************************************************************************
+ICIS32 5.3.0.0
+*****************************************************************************************
+
+Feb 8, 2006
+*****************
+#getSVariate - the ORDER BY clause is changed in the SQL statement
+#getSFactor -  the ORDER BY clause is changed in the SQL statement
+
+
+Jan 24, 2006
+*****************
+1. INSTALID - global variable to store the local installation ID
+2. DMS_getDMSStatus - provides the status of DMS local database; 1 if data is being loaded to DMS
+3. DMS_setDMSStatus - updates the INSTLN.DMS_STATUS field (1 if data is being loaded)
+
+
+
+
+
+*****************************************************************************************
+ICIS32 5.2.1.2
+*****************************************************************************************
+
+January 16, 2006
+*****************
+1. getOunitLevel - A different SQL statements are used if the database is Postgres/MySQL or 
+                Oracle/MA Access/other DBMS
+2. getOunitData - a different SQL statements are used if the database is  Postgres/MySQL or 
+               Oracle/MA Access/other DBM
+3. DMS_getUFactor = changed the data structure of DMS_UFACTOR by using the IDs instead of 
+                names of property ontology because some factors will not be returned if their 
+                trait, scale and method are in the central database 
+4. DMS_getUVariate - changed the data structure of DMS_UVARIATE by using the IDs instead of                 names of property ontology because some variates will not be returned if their
+                trait, scale and method are in the central database 
+5. DMS_findPFLevel - conversion functions are used to merged the numeric and character level
+6. DMS_findLFLevel - conversion functions are used to merged the numeric and character level
+7. Created a new structure for list data to accomodate the status of the entry
+typedef struct TGMS_LDStatus{    ///ListData with Status
+    LONG          listid,
+                  gid,
+                  lrecid;
+    CHAR          entrycd[GMS_LIST_ENTCD],
+                  source[GMS_LIST_SOURC];
+    CHAR          desig[GMS_LIST_DESIG];
+    CHAR          grpname[GMS_LIST_GRPNM];
+	LONG          entryid;
+	LONG          status;
+}           GMS_LDStatus;
+
+8. GMS_addTextLine - add an entry in the list data with LRSTATUS = 5 which means the entry is 
+                 a text line.
+
+January 17. 2006
+*****************
+1. DMS_findPFLevel - the numeric level value in the WHERE caluse is also changed
+2. DMS_findLFLevel - the numeric level value in the WHERE caluse is also changed
+
+JAn 19, 2006
+1. getListByStatus - hierarchy is added as input parameter
+
+Jan 20, 2006
+1. LONG DLL_INTERFACE GMS_countListEntry(long listid) 
+-Input: listid
+- the return value is the number of germplasm entries in the list
+
+
+
+
+
+***************************************************************************************** ICIS32 5.2.1.1
+***************************************************************************************** 
+
+Dec 2, 2005
+*****************
+DMS_addStudy - corrected the error for garbage data in the objective
+
+Dec. 6, 2005
+*****************
+2. DMS_getCondLevel - used a different SQL for Oracle, Postgres
+3. DMS_getDataLevel - used a different SQL for Oracle, Postgres
+
+
+
+
+

@@ -1,0 +1,5 @@
+lib /machine:ix86 /def:icis32.def /OUT:..\Release\ICIS32.lib
+copy ..\Release\ICIS32.dll "P:\Develop\Release"
+copy ..\Release\ICIS32.lib "P:\Develop\Release"
+copy ..\Release\ICIS32.exp "P:\Develop\Release"
+"C:\Program Files\WiredRed\EPop\EPop.exe" /message="New ICIS32.DLL" /subject="ICIS Development" /object="McLaren, Graham.users"
